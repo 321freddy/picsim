@@ -6,18 +6,16 @@ using UnityEngine.UI;
 
 public class GUIController : MonoBehaviour
 {
-    public const string PATH = ".\\TestProgramme\\";
-
     public Dropdown fileDropdown;
+    public GameObject codeContainer;
 
+    public GameObject codeLineTemplate;
 
-    // Start is called before the first frame update
     // Start is called before the first frame update
     void Start()
     {
-        var info = new DirectoryInfo(PATH);
-        var fileInfo = info.GetFiles();
-        foreach (var file in fileInfo)
+        // Populate file dropdown
+        foreach (var file in FileManager.listAll())
         {
             fileDropdown.options.Add(new Dropdown.OptionData(file.Name));
         }
@@ -31,8 +29,18 @@ public class GUIController : MonoBehaviour
 
     public void onFileSelected()
     {
-        var name = fileDropdown.options[fileDropdown.value].text;
-        Debug.Log("selected file " + name);
+        // clear file view
+        foreach (Transform child in codeContainer.transform) Destroy(child.gameObject);
+
+        var filename = fileDropdown.options[fileDropdown.value].text;
+        Debug.Log("selected file " + filename);
+        
+        var lines = FileManager.getLines(filename);
+        foreach (string line in lines)
+        {
+            var lineObject = Instantiate(codeLineTemplate, codeContainer.transform);
+            lineObject.GetComponent<Text>().text = line;
+        }
     }
 
     public void onBtnClick()
