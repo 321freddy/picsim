@@ -36,11 +36,15 @@ public class GUIController : MonoBehaviour
         Debug.Log("selected file " + filename);
         
         var lines = FileManager.getLines(filename);
+        
+
         foreach (string line in lines)
         {
             var lineObject = Instantiate(codeLineTemplate, codeContainer.transform);
             lineObject.GetComponent<Text>().text = line;
         }
+
+        Program.Parse(lines);
     }
 
     public void onBtnClick()
