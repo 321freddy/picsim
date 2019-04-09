@@ -8,7 +8,6 @@ class Program
 {
     private Command[] commands;
 
-
     public static Program Parse(List<string> lines)
     {
         var commands = new List<Command>();

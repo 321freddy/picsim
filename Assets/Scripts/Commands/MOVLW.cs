@@ -11,6 +11,10 @@ namespace Commands
     {
         public MOVLW(string command) : base(command)
         {
+            Memory.w_Register = Convert.ToInt32(command, 16) ^ 0b11_0000_0000_0000; //extract last 8 bits
+
+            Debug.Log("W-Register: " + Memory.w_Register.ToString("X") + " HEX");
+            Debug.Log("Zero-Flag: " + Memory.zero_Flag);
             Debug.Log("MOVLW");
         }
 
