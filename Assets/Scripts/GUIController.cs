@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class GUIController : MonoBehaviour
 {
     public Dropdown fileDropdown;
     public GameObject codeContainer;
+    public GameObject w_Register_Container;
 
     public GameObject codeLineTemplate;
 

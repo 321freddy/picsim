@@ -9,8 +9,13 @@ namespace Commands
 {
     class ANDLW : Command
     {
+
         public ANDLW(string command) : base(command)
         {
+            int literal;
+            literal = Convert.ToInt32(command, 16) ^ 0b11_1001_0000_0000; //extract last 8 bits
+            MOVLW.w_Register = literal & MOVLW.w_Register;
+            Debug.Log("W-Register: " + MOVLW.w_Register.ToString("X") + " HEX");
             Debug.Log("ANDLW");
         }
 
@@ -22,7 +27,7 @@ namespace Commands
 
         public override void run()
         {
-            Debug.Log("running movwf");
+            Debug.Log("running ANDLW");
         }
     }
 }

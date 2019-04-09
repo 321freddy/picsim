@@ -26,7 +26,6 @@ public static class FileManager
         {
             lines.Add(line);
         }
-
         return lines;
     }
 }
