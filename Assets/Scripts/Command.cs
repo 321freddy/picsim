@@ -33,7 +33,9 @@ abstract class Command
 
     public Command(string command)
     {
+        Debug.Log(command[0]);
         Debug.Log("new cmd " + command);
+        Memory.p_Counter++;
     }
 
     public abstract void run();

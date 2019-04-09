@@ -14,8 +14,19 @@ namespace Commands
         {
             int literal;
             literal = Convert.ToInt32(command, 16) ^ 0b11_1001_0000_0000; //extract last 8 bits
-            MOVLW.w_Register = literal & MOVLW.w_Register;
-            Debug.Log("W-Register: " + MOVLW.w_Register.ToString("X") + " HEX");
+            if ((literal & Memory.w_Register) == 0)
+            {
+                Memory.zero_Flag = 1;
+            }
+            else
+            {
+                Memory.zero_Flag = 0;
+            }
+
+            Memory.w_Register = literal & Memory.w_Register;
+
+            Debug.Log("W-Register: " + Memory.w_Register.ToString("X") + " HEX");
+            Debug.Log("Zero-Flag: " + Memory.zero_Flag);
             Debug.Log("ANDLW");
         }
 

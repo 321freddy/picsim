@@ -9,7 +9,6 @@ public class GUIController : MonoBehaviour
 {
     public Dropdown fileDropdown;
     public GameObject codeContainer;
-    public GameObject w_Register_Container;
 
     public GameObject codeLineTemplate;
 
@@ -26,7 +25,16 @@ public class GUIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Debug.Log("test log 123");
+        GameObject.Find("wRegister").GetComponent<Text>().text ="W-Register: " + Memory.w_Register.ToString("X");
+        GameObject.Find("ZeroFlag").GetComponent<Text>().text ="Zero-Flag: " + Memory.zero_Flag.ToString();
+        if(Memory.p_Counter == 0)
+        {
+            GameObject.Find("ProgCounter").GetComponent<Text>().text ="PCL: " + Memory.p_Counter.ToString();
+        }
+        else
+        {
+            GameObject.Find("ProgCounter").GetComponent<Text>().text ="PCL: " + (Memory.p_Counter - 1).ToString();
+        }
     }
 
     public void onFileSelected()
