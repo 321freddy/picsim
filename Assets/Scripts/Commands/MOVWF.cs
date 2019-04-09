@@ -22,7 +22,7 @@ namespace Commands
 
         public override void run()
         {
-            Debug.Log("running movwf");
+            Debug.Log("running MOVWF");
         }
     }
 }

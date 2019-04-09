@@ -7,22 +7,22 @@ using UnityEngine;
 
 namespace Commands
 {
-    class MOVLW : Command
+    class DECFSZ : Command
     {
-        public MOVLW(string command) : base(command)
+        public DECFSZ(string command) : base(command)
         {
-            Debug.Log("MOVLW");
+            Debug.Log("DECFSZ");
         }
 
         public static bool check(string command)
         {
             var opcode = Convert.ToInt32(command, 16);
-            return (opcode & 0b0011_1100_0000_0000) == 0b11_0000_0000_0000;
+            return (opcode & 0b0011_1111_0000_0000) == 0b00_1011_0000_0000;
         }
 
         public override void run()
         {
-            Debug.Log("running MOVLW");
+            Debug.Log("running DECFSZ");
         }
     }
 }
