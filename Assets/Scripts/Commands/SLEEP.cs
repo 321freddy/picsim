@@ -9,18 +9,18 @@ namespace Commands
 {
     class SLEEP : Command
     {
-        public SLEEP(string command) : base(command)
+        public SLEEP(ushort opcode) : base(opcode)
         {
             Debug.Log("SLEEP");
         }
 
-        public static bool check(string command)
+        public static bool check(ushort opcode) // Return true if opcode contains this command
         {
-            var opcode = Convert.ToInt32(command, 16);
+
             return (opcode & 0b0011_1111_1111_1111) == 0b0000_0000_0110_0011;
         }
 
-        public override void run()
+        public override void run(Memory memory)
         {
             Debug.Log("running SLEEP");
         }

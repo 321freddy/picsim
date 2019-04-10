@@ -7,10 +7,17 @@ using System;
 
 public class GUIController : MonoBehaviour
 {
+    public Color COLOR_DEFAULT;
+    public Color COLOR_WAS_RUNNING;
+    public Color COLOR_RUNNING;
+    public Color COLOR_BREAKPOINT;
+
     public Dropdown fileDropdown;
     public GameObject codeContainer;
-
     public GameObject codeLineTemplate;
+
+    private Simulation simulation;
+    private Command lastCommand = null;
 
     // Start is called before the first frame update
     void Start()
@@ -22,18 +29,41 @@ public class GUIController : MonoBehaviour
         }
     }
 
+    private void setCommandColor(Command cmd, Color color)
+    {
+        if (cmd != null)
+        {
+            var obj = codeContainer.transform.GetChild(cmd.Line);
+            if (obj != null)
+            {
+                obj.GetComponent<Text>().color = color;
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        GameObject.Find("wRegister").GetComponent<Text>().text ="W-Register: " + Memory.w_Register.ToString("X");
-        GameObject.Find("ZeroFlag").GetComponent<Text>().text ="Zero-Flag: " + Memory.zero_Flag.ToString();
-        if(Memory.p_Counter == 0)
+        if (simulation != null)
         {
-            GameObject.Find("ProgCounter").GetComponent<Text>().text ="PCL: " + Memory.p_Counter.ToString();
-        }
-        else
-        {
-            GameObject.Find("ProgCounter").GetComponent<Text>().text ="PCL: " + (Memory.p_Counter - 1).ToString();
+            setCommandColor(lastCommand, COLOR_WAS_RUNNING); // Update current command color to green
+            lastCommand = simulation.getCurrentCommand();
+            setCommandColor(lastCommand, COLOR_RUNNING);
+
+            var success = simulation.step();
+            if (success)
+            {
+                // Update GUI
+                GameObject.Find("wRegister").GetComponent<Text>().text ="W-Register: " + simulation.Memory.w_Register.ToString("X");
+                GameObject.Find("ZeroFlag").GetComponent<Text>().text ="Zero-Flag: " + simulation.Memory.ZeroFlag.ToString();
+                GameObject.Find("ProgCounter").GetComponent<Text>().text ="PCL: " + simulation.Memory.ProgramCounter.ToString();
+            }
+            else
+            {
+                simulation = null;
+                lastCommand = null;
+            }
+
         }
     }
 
@@ -54,7 +84,7 @@ public class GUIController : MonoBehaviour
             lineObject.GetComponent<Text>().text = line;
         }
 
-        Program.Parse(lines);
+        simulation = Simulation.CreateFromProgram(lines);
     }
 
     public void onBtnClick()

@@ -9,18 +9,18 @@ namespace Commands
 {
     class RLF : Command
     {
-        public RLF(string command) : base(command)
+        public RLF(ushort opcode) : base(opcode)
         {
             Debug.Log("RLF");
         }
 
-        public static bool check(string command)
+        public static bool check(ushort opcode) // Return true if opcode contains this command
         {
-            var opcode = Convert.ToInt32(command, 16);
+
             return (opcode & 0b0011_1111_0000_0000) == 0b00_1101_0000_0000;
         }
 
-        public override void run()
+        public override void run(Memory memory)
         {
             Debug.Log("running RLF");
         }

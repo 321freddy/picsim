@@ -9,36 +9,23 @@ namespace Commands
 {
     class ANDLW : Command
     {
+        private byte literal;
 
-        public ANDLW(string command) : base(command)
+        public ANDLW(ushort opcode) : base(opcode)
         {
-            int literal;
-            literal = Convert.ToInt32(command, 16) ^ 0b11_1001_0000_0000; //extract last 8 bits
-            if ((literal & Memory.w_Register) == 0)
-            {
-                Memory.zero_Flag = 1;
-            }
-            else
-            {
-                Memory.zero_Flag = 0;
-            }
-
-            Memory.w_Register = literal & Memory.w_Register;
-
-            Debug.Log("W-Register: " + Memory.w_Register.ToString("X") + " HEX");
-            Debug.Log("Zero-Flag: " + Memory.zero_Flag);
-            Debug.Log("ANDLW");
+            literal = (byte)(opcode & 0b1111_1111);
         }
 
-        public static bool check(string command)
+        public static bool check(ushort opcode) // Return true if opcode contains this command
         {
-            var opcode = Convert.ToInt32(command, 16);
             return (opcode & 0b0011_1111_0000_0000) == 0b0011_1001_0000_0000;
         }
 
-        public override void run()
+        public override void run(Memory memory)
         {
             Debug.Log("running ANDLW");
+            memory.w_Register = (byte) (literal & memory.w_Register);
+            base.run(memory); // Increase PC
         }
     }
 }

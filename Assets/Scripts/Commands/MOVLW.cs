@@ -9,24 +9,23 @@ namespace Commands
 {
     class MOVLW : Command
     {
-        public MOVLW(string command) : base(command)
-        {
-            Memory.w_Register = Convert.ToInt32(command, 16) ^ 0b11_0000_0000_0000; //extract last 8 bits
+        private byte literal;
 
-            Debug.Log("W-Register: " + Memory.w_Register.ToString("X") + " HEX");
-            Debug.Log("Zero-Flag: " + Memory.zero_Flag);
-            Debug.Log("MOVLW");
+        public MOVLW(ushort opcode) : base(opcode)
+        {
+            literal = (byte) (opcode & 0b1111_1111);
         }
 
-        public static bool check(string command)
+        public static bool check(ushort opcode) // Return true if opcode contains this command
         {
-            var opcode = Convert.ToInt32(command, 16);
             return (opcode & 0b0011_1100_0000_0000) == 0b11_0000_0000_0000;
         }
 
-        public override void run()
+        public override void run(Memory memory)
         {
             Debug.Log("running MOVLW");
+            memory.w_Register = literal;
+            base.run(memory); // Increase PC
         }
     }
 }

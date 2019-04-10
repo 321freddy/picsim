@@ -9,18 +9,18 @@ namespace Commands
 {
     class MOVWF : Command
     {
-        public MOVWF(string command) : base(command)
+        public MOVWF(ushort opcode) : base(opcode)
         {
             Debug.Log("MOVWF");
         }
 
-        public static bool check(string command)
+        public static bool check(ushort opcode) // Return true if opcode contains this command
         {
-            var opcode = Convert.ToInt32(command, 16);
+
             return (opcode & 0b0011_1111_1000_0000) == 0b1000_0000;
         }
 
-        public override void run()
+        public override void run(Memory memory)
         {
             Debug.Log("running MOVWF");
         }
