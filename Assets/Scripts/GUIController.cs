@@ -17,6 +17,9 @@ public class GUIController : MonoBehaviour
     public GameObject codeLineTemplate;
     public GameObject goButton;
     public GameObject pauseButton;
+    public GameObject stepInButton;
+    public GameObject stepOutButton;
+    public GameObject resetButton;
 
     private Simulation simulation;
     private Command currentCommand = null;
@@ -89,6 +92,11 @@ public class GUIController : MonoBehaviour
             lineNum++;
         }
 
+        goButton.GetComponent<Button>().interactable = true;
+        pauseButton.GetComponent<Button>().interactable = true;
+        stepInButton.GetComponent<Button>().interactable = true;
+        stepOutButton.GetComponent<Button>().interactable = true;
+        resetButton.GetComponent<Button>().interactable = true;
     }
 
     public void stepIn()
