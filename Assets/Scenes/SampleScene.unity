@@ -878,7 +878,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'W Register: 0'
+  m_Text: 'W Register: -'
 --- !u!222 &259632747
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1036,7 +1036,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Program Counter: 0'
+  m_Text: 'Program Counter: -'
 --- !u!222 &314678653
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1968,7 +1968,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Zero Flag: 0'
+  m_Text: 'Zero Flag: -'
 --- !u!222 &1237139447
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2999,6 +2999,9 @@ MonoBehaviour:
     type: 3}
   goButton: {fileID: 438704577}
   pauseButton: {fileID: 1240903083}
+  stepInButton: {fileID: 2008852454}
+  stepOutButton: {fileID: 84840509}
+  resetButton: {fileID: 1951195059}
 --- !u!1 &1951195059
 GameObject:
   m_ObjectHideFlags: 0

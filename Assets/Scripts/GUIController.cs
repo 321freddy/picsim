@@ -67,6 +67,13 @@ public class GUIController : MonoBehaviour
             }
         }
     }
+
+    private void updateRegisterDisplay()
+    {
+        GameObject.Find("wRegister").GetComponent<Text>().text = "W Register: " + simulation.Memory.w_Register.ToString("X2") + "h";
+        GameObject.Find("ZeroFlag").GetComponent<Text>().text = "Zero Flag: " + simulation.Memory.ZeroFlag.ToString();
+        GameObject.Find("ProgCounter").GetComponent<Text>().text = "Program Counter: " + simulation.Memory.ProgramCounter.ToString();
+    }
     
     public void onFileSelected()
     {
@@ -79,6 +86,7 @@ public class GUIController : MonoBehaviour
         var lines = FileManager.getLines(filename); // Read file
         simulation = Simulation.CreateFromProgram(lines); // Init simulation
 
+        updateRegisterDisplay();
         setSimulationRunning(false);
         currentCommand = simulation.getCurrentCommand();
 
@@ -109,9 +117,7 @@ public class GUIController : MonoBehaviour
             currentCommand = simulation.getCurrentCommand();
             setCommandColor(currentCommand, COLOR_RUNNING);
 
-            GameObject.Find("wRegister").GetComponent<Text>().text = "W Register: " + simulation.Memory.w_Register.ToString("X");
-            GameObject.Find("ZeroFlag").GetComponent<Text>().text = "Zero Flag: " + simulation.Memory.ZeroFlag.ToString();
-            GameObject.Find("ProgCounter").GetComponent<Text>().text = "Program Counter: " + simulation.Memory.ProgramCounter.ToString();
+            updateRegisterDisplay();
         }
         else
         {
@@ -164,11 +170,7 @@ public class GUIController : MonoBehaviour
             codeLine.color = COLOR_DEFAULT;
         }
 
-        // Reset text
-        GameObject.Find("wRegister").GetComponent<Text>().text = "W Register: 0";
-        GameObject.Find("ZeroFlag").GetComponent<Text>().text = "Zero Flag: 0";
-        GameObject.Find("ProgCounter").GetComponent<Text>().text = "Program Counter: 0";
-
+        updateRegisterDisplay();
         setSimulationRunning(false);
         currentCommand = simulation.getCurrentCommand();
         setCommandColor(currentCommand, COLOR_RUNNING); // Mark first command
