@@ -34,9 +34,6 @@ public class GUIController : MonoBehaviour
         {
             fileDropdown.options.Add(new Dropdown.OptionData(file.Name));
         }
-
-        // Hide pause button
-        GameObject.Find("PauseButton").SetActive(false);
     }
 
     private void setSimulationRunning(bool running)
