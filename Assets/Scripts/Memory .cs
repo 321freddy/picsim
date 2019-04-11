@@ -23,7 +23,8 @@ class Memory
             addr != Address.STATUS &&
             addr != Address.FSR &&
             addr != Address.PCLATH &&
-            addr != Address.INTCON)
+            addr != Address.INTCON &&
+            addr < 0x0C)
         {
             addr = (byte) (addr + (Bank << 7));
         }
@@ -40,7 +41,8 @@ class Memory
             addr != Address.STATUS &&
             addr != Address.FSR &&
             addr != Address.PCLATH &&
-            addr != Address.INTCON)
+            addr != Address.INTCON &&
+            addr < 0x0C)
         {
             addr = (byte) (addr + (Bank << 7));
         }

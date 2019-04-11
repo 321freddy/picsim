@@ -24,7 +24,7 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running ADDLW");
-            var result = literal + memory.w_Register;
+            int result = literal + memory.w_Register;
             
             if (result > 0xFF)
             {
