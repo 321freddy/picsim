@@ -71,7 +71,7 @@ public class GUIController : MonoBehaviour
     private void updateRegisterDisplay()
     {
         GameObject.Find("wRegister").GetComponent<Text>().text = "W Register: " + simulation.Memory.w_Register.ToString("X2") + "h";
-        GameObject.Find("ZeroFlag").GetComponent<Text>().text = "Zero Flag: " + simulation.Memory.ZeroFlag.ToString();
+        GameObject.Find("StatusRegister").GetComponent<Text>().text = "STATUS: " + Convert.ToString(simulation.Memory.get(Address.STATUS), 2).PadLeft(8, '0');
         GameObject.Find("ProgCounter").GetComponent<Text>().text = "Program Counter: " + simulation.Memory.ProgramCounter.ToString();
     }
     

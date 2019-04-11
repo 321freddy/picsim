@@ -56,18 +56,27 @@ class Memory
             wReg = value;
             if (wReg == 0)
             {
-                setZeroFlag();
+                ZeroFlag = 1;
             }
             else
             {
-                clearZeroFlag();
+                ZeroFlag = 0;
             }
+        }
+    }
+
+    public byte Status
+    {
+        get => get(Address.STATUS);
+        set
+        {
+            set(Address.STATUS, value);
         }
     }
 
     public byte Bank
     {
-        get => (byte) ((get(Address.STATUS) & 0b0011_0000) >> 5);
+        get => (byte) Bit.get(Status, Bit.RP0, 2);
     }
 
     public ushort ProgramCounter // 13 bit
@@ -75,23 +84,17 @@ class Memory
         get => memory[Address.PCL];
         set
         {
-            memory[Address.PCL] = (ushort) (value & 0b0001_1111_1111_1111);
+            memory[Address.PCL] = (ushort) Bit.mask(value, 13);
         }
     }
 
     public byte ZeroFlag
     {
-        get => (byte) ((get(Address.STATUS) & 0b0000_0100) >> 2);
-    }
-
-    public void setZeroFlag()
-    {
-        set(Address.STATUS, (byte)(get(Address.STATUS) | 0b0000_0100));
-    }
-
-    public void clearZeroFlag()
-    {
-        set(Address.STATUS, (byte) (get(Address.STATUS) & 0b1111_1011));
+        get => (byte) Bit.get(Status, Bit.Z);
+        set
+        {
+            Status = (byte) Bit.setTo(Status, Bit.Z, value);
+        }
     }
 
 }
@@ -114,4 +117,96 @@ public static class Address
     public const byte EECON2 = 0x09;
     public const byte PCLATH = 0x0A;
     public const byte INTCON = 0x0B;
+}
+
+public static class Bit
+{
+    // STATUS register
+    public const byte C = 0;
+    public const byte DC = 1;
+    public const byte Z = 2;
+    public const byte PD = 3;
+    public const byte TO = 4;
+    public const byte RP0 = 5;
+    public const byte RP1 = 6;
+    public const byte IRP = 7;
+
+    // PORTA register
+    public const byte RA0 = 0;
+    public const byte RA1 = 1;
+    public const byte RA2 = 2;
+    public const byte RA3 = 3;
+    public const byte RA4 = 4;
+    public const byte T0CKI = 4;
+
+    // PORTB register
+    public const byte RB0 = 0;
+    public const byte INT = 0;
+    public const byte RB1 = 1;
+    public const byte RB2 = 2;
+    public const byte RB3 = 3;
+    public const byte RB4 = 4;
+    public const byte RB5 = 5;
+    public const byte RB6 = 6;
+    public const byte RB7 = 7;
+
+    // INTCON register
+    public const byte RBIF = 0;
+    public const byte INTF = 1;
+    public const byte T0IF = 2;
+    public const byte RBIE = 3;
+    public const byte INTE = 4;
+    public const byte T0IE = 5;
+    public const byte EEIE = 6;
+    public const byte GIE = 7;
+
+    // OPTION register
+    public const byte PS0 = 0;
+    public const byte PS1 = 1;
+    public const byte PS2 = 2;
+    public const byte PSA = 3;
+    public const byte T0SE = 4;
+    public const byte T0CS = 5;
+    public const byte INTEDG = 6;
+    public const byte RBPU = 7;
+
+    // EECON1 register
+    public const byte RD = 0;
+    public const byte WR = 1;
+    public const byte WREN = 2;
+    public const byte WRERR = 3;
+    public const byte EEIF = 4;
+
+
+    public static int get(int value, int bit, int length = 1)
+    {
+        return (value & (((1 << length) - 1) << bit)) >> bit;
+    }
+
+    public static int mask(int value, int length)
+    {
+        return get(value, 0, length);
+    }
+
+    public static int setTo(int value, int bit, int setTo, int length = 1)
+    {
+        if (setTo == 0)
+        {
+            return value & ~(((1 << length) - 1) << bit);
+        }
+        else
+        {
+            return value | (((1 << length) - 1) << bit);
+        }
+    }
+
+    public static int set(int value, int bit, int length = 1)
+    {
+        return setTo(value, bit, 1, length);
+    }
+
+    public static int clear(int value, int bit, int length = 1)
+    {
+        return setTo(value, bit, 0, length);
+    }
 }
