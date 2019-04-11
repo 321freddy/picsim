@@ -97,6 +97,24 @@ class Memory
         }
     }
 
+    public byte Carry
+    {
+        get => (byte) Bit.get(Status, Bit.C);
+        set
+        {
+            Status = (byte) Bit.setTo(Status, Bit.C, value);
+        }
+    }
+
+    public byte DigitCarry
+    {
+        get => (byte) Bit.get(Status, Bit.DC);
+        set
+        {
+            Status = (byte) Bit.setTo(Status, Bit.DC, value);
+        }
+    }
+
 }
 
 public static class Address
@@ -178,14 +196,26 @@ public static class Bit
     public const byte EEIF = 4;
 
 
-    public static int get(int value, int bit, int length = 1)
+    public static int get(int value, int bit, int length = 1, bool invertMask = false)
     {
-        return (value & (((1 << length) - 1) << bit)) >> bit;
+        if (invertMask)
+        {
+            return (value & ~(((1 << length) - 1) << bit)) >> bit;
+        }
+        else
+        {
+            return (value & (((1 << length) - 1) << bit)) >> bit;
+        }
     }
 
     public static int mask(int value, int length)
     {
         return get(value, 0, length);
+    }
+
+    public static int maskInverted(int value, int length)
+    {
+        return get(value, 0, length, true);
     }
 
     public static int setTo(int value, int bit, int setTo, int length = 1)

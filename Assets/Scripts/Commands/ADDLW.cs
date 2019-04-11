@@ -24,7 +24,27 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running ADDLW");
-            memory.w_Register = (byte) (literal + memory.w_Register);
+            var result = literal + memory.w_Register;
+            
+            if (result > 0xFF)
+            {
+                memory.Carry = 1;
+            }
+            else
+            {
+                memory.Carry = 0;
+            }
+
+            if (Bit.mask(literal, 4) + Bit.mask(memory.w_Register, 4) > 0xF)
+            {
+                memory.DigitCarry = 1;
+            }
+            else
+            {
+                memory.DigitCarry = 0;
+            }
+
+            memory.w_Register = (byte) result;
             base.run(memory); // Increase PC
         }
     }
