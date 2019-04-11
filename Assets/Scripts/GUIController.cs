@@ -15,6 +15,8 @@ public class GUIController : MonoBehaviour
     public Dropdown fileDropdown;
     public GameObject codeContainer;
     public GameObject codeLineTemplate;
+    public GameObject goButton;
+    public GameObject pauseButton;
 
     private Simulation simulation;
     private Command currentCommand = null;
@@ -28,6 +30,26 @@ public class GUIController : MonoBehaviour
         foreach (var file in FileManager.listAll())
         {
             fileDropdown.options.Add(new Dropdown.OptionData(file.Name));
+        }
+
+        // Hide pause button
+        GameObject.Find("PauseButton").SetActive(false);
+    }
+
+    private void setSimulationRunning(bool running)
+    {
+        simulationRunning = running;
+
+        // Update go/pause button
+        if (simulationRunning)
+        {
+            pauseButton.SetActive(true);
+            goButton.SetActive(false);
+        }
+        else
+        {
+            pauseButton.SetActive(false);
+            goButton.SetActive(true);
         }
     }
 
@@ -54,7 +76,7 @@ public class GUIController : MonoBehaviour
         var lines = FileManager.getLines(filename); // Read file
         simulation = Simulation.CreateFromProgram(lines); // Init simulation
 
-        simulationRunning = false;
+        setSimulationRunning(false);
         currentCommand = simulation.getCurrentCommand();
 
         var lineNum = 0;
@@ -86,7 +108,7 @@ public class GUIController : MonoBehaviour
         else
         {
             // Program reached end
-            simulationRunning = false;
+            setSimulationRunning(false);
         }
     }
 
@@ -102,16 +124,7 @@ public class GUIController : MonoBehaviour
     public void onGoBtnClick()
     {
         Debug.Log("Running program");
-        simulationRunning = !simulationRunning; // Toggle
-
-        if (simulationRunning)
-        {
-            GameObject.Find("GoButton").GetComponentInChildren<Text>().text = "Pause";
-        }
-        else
-        {
-            GameObject.Find("GoButton").GetComponentInChildren<Text>().text = "Go";
-        }
+        setSimulationRunning(!simulationRunning); // Toggle
     }
 
     public void onStepInBtnClick()
@@ -148,7 +161,7 @@ public class GUIController : MonoBehaviour
         GameObject.Find("ZeroFlag").GetComponent<Text>().text = "Zero Flag: 0";
         GameObject.Find("ProgCounter").GetComponent<Text>().text = "Program Counter: 0";
 
-        simulationRunning = false;
+        setSimulationRunning(false);
         currentCommand = simulation.getCurrentCommand();
         setCommandColor(currentCommand, COLOR_RUNNING); // Mark first command
     }
