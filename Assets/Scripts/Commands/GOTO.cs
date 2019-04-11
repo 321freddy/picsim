@@ -13,7 +13,7 @@ namespace Commands
 
         public GOTO(ushort opcode) : base(opcode)
         {
-            literal = (ushort) (opcode & 0b0111_1111_1111);
+            literal = (ushort) Bit.mask(opcode, 11);
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command

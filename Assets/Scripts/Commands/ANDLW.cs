@@ -13,7 +13,7 @@ namespace Commands
 
         public ANDLW(ushort opcode) : base(opcode)
         {
-            literal = (byte)(opcode & 0b1111_1111);
+            literal = (byte) Bit.mask(opcode, 8);
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
