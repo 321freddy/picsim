@@ -24,7 +24,7 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running MOVWF");
-            memory.set(address, memory.w_Register);
+            memory[address] = memory.w_Register;
             base.run(memory); // Increase PC
         }
     }

@@ -50,6 +50,15 @@ class Memory
         memory[addr] = value;
     }
 
+    public byte this[byte addr] // Overload indexing operator of memory object
+    {
+        get => get(addr);
+        set
+        {
+            set(addr, value);
+        }
+    }
+
     public byte w_Register
     {
         get => wReg;
@@ -69,10 +78,10 @@ class Memory
 
     public byte Status
     {
-        get => get(Address.STATUS);
+        get => this[Address.STATUS];
         set
         {
-            set(Address.STATUS, value);
+            this[Address.STATUS] = value;
         }
     }
 

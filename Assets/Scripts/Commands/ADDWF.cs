@@ -26,7 +26,7 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running ADDWF");
-            var variable = memory.get(address);
+            var variable = memory[address];
             int result = variable + memory.w_Register;
 
             if (result > 0xFF)
@@ -49,7 +49,7 @@ namespace Commands
 
             if (writeToMemory)
             {
-                memory.set(address, (byte) result);
+                memory[address] = (byte) result;
             }
             else
             {
