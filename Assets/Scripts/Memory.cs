@@ -41,10 +41,10 @@ class Memory
                 addr != Address.INTCON &&
                 addr < 0x0C)
             {
-                addr = (byte) (addr + (Bank << 7));
+                addr = (byte) (addr + (Bank << 7)); // Include bank bit in address
             }
 
-            return (byte) memory[addr];
+            return (byte) memory[addr]; // Read value
         }
         set
         {
@@ -58,12 +58,13 @@ class Memory
                 addr != Address.INTCON &&
                 addr < 0x0C)
             {
-                addr = (byte) (addr + (Bank << 7));
+                addr = (byte) (addr + (Bank << 7)); // Include bank bit in address
             }
 
-            memory[addr] = value;
+            memory[addr] = value; // Write value
         }
     }
+
 
 
     public byte w_Register
@@ -72,23 +73,15 @@ class Memory
         set
         {
             wReg = value;
-            if (wReg == 0)
-            {
-                ZeroFlag = 1;
-            }
-            else
-            {
-                ZeroFlag = 0;
-            }
         }
     }
 
     public byte Status
     {
-        get => this[Address.STATUS];
+        get => (byte) memory[Address.STATUS];
         set
         {
-            this[Address.STATUS] = value;
+            memory[Address.STATUS] = value;
         }
     }
 

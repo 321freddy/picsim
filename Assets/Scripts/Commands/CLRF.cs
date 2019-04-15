@@ -9,9 +9,11 @@ namespace Commands
 {
     class CLRF : Command
     {
+        private byte address;
+
         public CLRF(ushort opcode) : base(opcode)
         {
-            Debug.Log("CLRF");
+            address = (byte)Bit.mask(opcode, 7);
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
@@ -23,6 +25,8 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running CLRF");
+            memory[address] = 0;
+            memory.ZeroFlag = 1;
         }
     }
 }

@@ -44,6 +44,16 @@ namespace Commands
                 memory.DigitCarry = 0;
             }
 
+            // Update Zero Flag
+            if (result == 0)
+            {
+                memory.ZeroFlag = 1;
+            }
+            else
+            {
+                memory.ZeroFlag = 0;
+            }
+
             memory.w_Register = (byte) result;
             base.run(memory); // Increase PC
         }
