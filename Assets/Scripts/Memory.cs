@@ -99,6 +99,24 @@ class Memory
         }
     }
 
+    public byte PCL
+    {
+        get => (byte) memory[Address.PCL];
+        set
+        {
+            memory[Address.PCL] = value;
+        }
+    }
+
+    public byte PCLATH
+    {
+        get => (byte) memory[Address.PCLATH];
+        set
+        {
+            memory[Address.PCLATH] = value;
+        }
+    }
+
     public byte ZeroFlag
     {
         get => (byte) Bit.get(Status, Bit.Z);
