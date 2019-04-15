@@ -8,9 +8,11 @@ using UnityEngine;
 
 abstract class Command
 {
-    public static Command Parse(string command)
+    public int Line { get; private set; } // Line number in original source code
+
+    public static Command Parse(string command, int line)
     {
-        var args = new object[] { command };
+        var args = new object[] { Convert.ToUInt16(command, 16) };
         var types = Assembly
                     .GetExecutingAssembly()
                     .GetTypes()
@@ -24,19 +26,22 @@ abstract class Command
             {
 
                 // Mask and OpCode matches...
-                return (Command) commandType.GetConstructors()[0].Invoke(args);
+                var cmd = (Command) commandType.GetConstructors()[0].Invoke(args);
+                cmd.Line = line;
+                return cmd;
             }
         }
 
-        throw new Exception("Unknwon cmd: " + command);
+        throw new Exception("Unbekannter Befehl: " + command);
     }
 
-    public Command(string command)
+    public Command(ushort opcode)
     {
-        Debug.Log(command[0]);
-        Debug.Log("new cmd " + command);
-        Memory.p_Counter++;
+        
     }
 
-    public abstract void run();
+    public virtual void run(Memory memory)
+    {
+        memory.ProgramCounter++;
+    }
 }

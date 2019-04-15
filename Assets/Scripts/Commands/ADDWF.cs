@@ -7,25 +7,28 @@ using UnityEngine;
 
 namespace Commands
 {
-    class ADDLW : Command
+    class ADDWF : Command
     {
-        private byte literal;
+        private byte address;
+        private bool writeToMemory;
 
-        public ADDLW(ushort opcode) : base(opcode)
+        public ADDWF(ushort opcode) : base(opcode)
         {
-            literal = (byte) Bit.mask(opcode, 8);
+            address = (byte) Bit.mask(opcode, 7);
+            writeToMemory = Bit.get(opcode, 7) == 1;
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
         {
-            return (opcode & 0b0011_1110_0000_0000) == 0b0011_1110_0000_0000;
+            return (opcode & 0b0011_1111_0000_0000) == 0b00_0111_0000_0000;
         }
 
         public override void run(Memory memory)
         {
-            Debug.Log("running ADDLW");
-            int result = literal + memory.w_Register;
-            
+            Debug.Log("running ADDWF");
+            var variable = memory[address];
+            int result = variable + memory.w_Register;
+
             if (result > 0xFF)
             {
                 memory.Carry = 1;
@@ -35,7 +38,7 @@ namespace Commands
                 memory.Carry = 0;
             }
 
-            if (Bit.mask(literal, 4) + Bit.mask(memory.w_Register, 4) > 0xF)
+            if (Bit.mask(variable, 4) + Bit.mask(memory.w_Register, 4) > 0xF)
             {
                 memory.DigitCarry = 1;
             }
@@ -44,7 +47,15 @@ namespace Commands
                 memory.DigitCarry = 0;
             }
 
-            memory.w_Register = (byte) result;
+            if (writeToMemory)
+            {
+                memory[address] = (byte) result;
+            }
+            else
+            {
+                memory.w_Register = (byte) result;
+            }
+
             base.run(memory); // Increase PC
         }
     }

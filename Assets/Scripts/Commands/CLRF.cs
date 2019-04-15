@@ -7,22 +7,22 @@ using UnityEngine;
 
 namespace Commands
 {
-    class CALL : Command
+    class CLRF : Command
     {
-        public CALL(ushort opcode) : base(opcode)
+        public CLRF(ushort opcode) : base(opcode)
         {
-            Debug.Log("CALL");
+            Debug.Log("CLRF");
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
         {
 
-            return (opcode & 0b0011_1000_0000_0000) == 0b0010_0000_0000_0000;
+            return (opcode & 0b0011_1111_1000_0000) == 0b00_0001_1000_0000;
         }
 
         public override void run(Memory memory)
         {
-            Debug.Log("running CALL");
+            Debug.Log("running CLRF");
         }
     }
 }

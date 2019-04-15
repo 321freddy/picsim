@@ -7,24 +7,21 @@ using UnityEngine;
 
 namespace Commands
 {
-    class ANDLW : Command
+    class NOP : Command
     {
-        private byte literal;
-
-        public ANDLW(ushort opcode) : base(opcode)
+        public NOP(ushort opcode) : base(opcode)
         {
-            literal = (byte) Bit.mask(opcode, 8);
+
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
         {
-            return (opcode & 0b0011_1111_0000_0000) == 0b0011_1001_0000_0000;
+            return (opcode & 0b0011_1111_1001_1111) == 0;
         }
 
         public override void run(Memory memory)
         {
-            Debug.Log("running ANDLW");
-            memory.w_Register = (byte) (literal & memory.w_Register);
+            Debug.Log("running NOP");
             base.run(memory); // Increase PC
         }
     }
