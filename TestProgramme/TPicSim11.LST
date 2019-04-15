@@ -1,10 +1,10 @@
                     00001           ;TPicSim11
                     00002           ;Programm zum Test des 16F84-Simulators.
-                    00003           ;Es wird der Watchdog mit und ohne Vorteiler gepr¸ft
+                    00003           ;Es wird der Watchdog mit und ohne Vorteiler gepr√ºft
                     00004           ;(c) St. Lehmann  
                     00005           ;19.04.2014 
                     00006           
-                    00007           list c=132          ;Zeilenl‰nge im LST auf 132 Zeichen setzen
+                    00007           list c=132          ;Zeilenl√§nge im LST auf 132 Zeichen setzen
                     00008           
                     00009           ;Definition einiger Symbole
                     00010           indirect equ 0
@@ -31,9 +31,9 @@
 0007 01A3           00031           clrf 23h
                     00032  loop1    
 0008 0FA0           00033           incfsz 20h
-0009 2808           00034           goto loop1          ;kein ‹berlauf
-000A 0FA1           00035           incfsz 21h          ;n‰chste Stelle
-000B 2808           00036           goto loop1          ;kein ‹berlauf
+0009 2808           00034           goto loop1          ;kein √úberlauf
+000A 0FA1           00035           incfsz 21h          ;n√§chste Stelle
+000B 2808           00036           goto loop1          ;kein √úberlauf
 000C 0FA2           00037           incfsz 22h          ;ja
 000D 2808           00038           goto loop1
 000E 0FA3           00039           incfsz 23h
@@ -42,7 +42,7 @@
                     00042           ;******************************************************************
                     00043           ;in 20h steht ca. 5fH
                     00044           ;in 21H ca. 17H
-                    00045           ;Z‰hlerstand 16-Bit ca. 175FH = 5983d
+                    00045           ;Z√§hlerstand 16-Bit ca. 175FH = 5983d
                     00046           
                     00047  ende     
 0010 2810           00048           goto ende           ;Endlosschleife, verhindert Nirwana

@@ -1,10 +1,10 @@
                     00001           ;TPicSim1
                     00002           ;Programm zum Test des 16F84-Simulators.
-                    00003           ;Es werden alle Literal-Befehle geprüft
+                    00003           ;Es werden alle Literal-Befehle geprÃ¼ft
                     00004           ;(c) St. Lehmann
                     00005           ;Ersterstellung: 23.03.2016
                     00006           ;
-                    00007           list c=132          ;Zeilenlänge im LST auf 132 Zeichen setzen
+                    00007           list c=132          ;ZeilenlÃ¤nge im LST auf 132 Zeichen setzen
                     00008           
                     00009           ;Definition einiger Symbole
                     00010           ;zuerst Hardware-Register
@@ -12,7 +12,7 @@
                     00012           ra       equ 05h
                     00013           rb       equ 06h
                     00014           
-                    00015           ;für den Benutzer frei verwendbare Register
+                    00015           ;fÃ¼r den Benutzer frei verwendbare Register
                     00016           count    equ 0ch
                     00017           
                     00018           ;Definition des Prozessors
@@ -21,7 +21,7 @@
                     00021           ;Festlegen des Codebeginns
                     00022           org 0
                     00023  start    
-0000 3011           00024           movlw 11h           ;in W steht nun 11h, Statusreg. unverändert
+0000 3011           00024           movlw 11h           ;in W steht nun 11h, Statusreg. unverÃ¤ndert
 0001 3930           00025           andlw 30h           ;W = 10h, C=x, DC=x, Z=0
 0002 380D           00026           iorlw 0Dh           ;W = 1Dh, C=x, DC=x, Z=0
 0003 3C3D           00027           sublw 3Dh           ;W = 20h, C=1, DC=1, Z=0
