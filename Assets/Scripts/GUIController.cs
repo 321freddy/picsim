@@ -68,10 +68,20 @@ public class GUIController : MonoBehaviour
     }
 
     private void updateRegisterDisplay()
-    {
+    {   
         GameObject.Find("wRegister").GetComponent<Text>().text = "W Register: " + simulation.Memory.w_Register.ToString("X2") + "h";
-        GameObject.Find("StatusRegister").GetComponent<Text>().text = "STATUS: " + Convert.ToString(simulation.Memory.get(Address.STATUS), 2).PadLeft(8, '0');
+        //GameObject.Find("StatusRegister").GetComponent<Text>().text = "STATUS: " + Convert.ToString(simulation.Memory.get(Address.STATUS), 2).PadLeft(8, '0');
         GameObject.Find("ProgCounter").GetComponent<Text>().text = "Program Counter: " + simulation.Memory.ProgramCounter.ToString();
+
+        //Write Bits to GUI StatusReg
+        GameObject.Find("C (1)").GetComponent<Text>().text   = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.C), 2);
+        GameObject.Find("DC (1)").GetComponent<Text>().text  = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.DC), 2);
+        GameObject.Find("Z (1)").GetComponent<Text>().text   = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.Z), 2);
+        GameObject.Find("PD (1)").GetComponent<Text>().text  = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.PD), 2);
+        GameObject.Find("TO (1)").GetComponent<Text>().text  = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.TO), 2);
+        GameObject.Find("RP0 (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.RP0), 2);
+        GameObject.Find("RP1 (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.RP1), 2);
+        GameObject.Find("IRP (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.IRP), 2);
     }
     
     public void onFileSelected()
