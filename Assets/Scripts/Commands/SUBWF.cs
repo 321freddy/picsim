@@ -9,9 +9,13 @@ namespace Commands
 {
     class SUBWF : Command
     {
+        private byte address;
+        private bool writeToMemory;
+
         public SUBWF(ushort opcode) : base(opcode)
         {
-            Debug.Log("SUBWF");
+            address = (byte)Bit.mask(opcode, 7);
+            writeToMemory = Bit.get(opcode, 7) == 1;
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
@@ -23,6 +27,46 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running SUBWF");
+            int result = memory[address] - memory.w_Register;
+            Debug.Log("RESULT SUBWF" + result);
+            if (result >= 0)
+            {
+                memory.Carry = 1;
+            }
+            else
+            {
+                memory.Carry = 0;
+            }
+
+            if (Bit.mask(memory[address], 4) - Bit.mask(memory.w_Register, 4) >= 0)
+            {
+                memory.DigitCarry = 1;
+            }
+            else
+            {
+                memory.DigitCarry = 0;
+            }
+
+            // Update Zero Flag
+            if (result == 0)
+            {
+                memory.ZeroFlag = 1;
+            }
+            else
+            {
+                memory.ZeroFlag = 0;
+            }
+
+            if (writeToMemory)
+            {
+                memory[address] = (byte)result;
+            }
+            else
+            {
+                memory.w_Register = (byte)result;
+            }
+
+            base.run(memory); // Increase PC
         }
     }
 }
