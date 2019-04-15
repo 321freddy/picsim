@@ -11,8 +11,20 @@ class Memory
     private byte wReg = 0;
     private ushort[] memory = new ushort[0x100];
     private ushort[] stack = new ushort[8];
-    private byte stackPos = 0;
+    private int stackPos = 0;
 
+    
+    public void pushStack(ushort value)
+    {
+        stack[stackPos] = value;
+        stackPos = (stackPos + 1) % stack.Length;
+    }
+
+    public ushort popStack()
+    {
+        stackPos = (stackPos + stack.Length - 1) % stack.Length;
+        return stack[stackPos];
+    }
 
     public byte this[byte addr] // Overload indexing operator of memory object
     {
