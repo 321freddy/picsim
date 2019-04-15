@@ -13,51 +13,46 @@ class Memory
     private ushort[] stack = new ushort[8];
     private byte stackPos = 0;
 
-    public byte get(byte addr)
-    {
-        if (addr == 0x07 || addr > 0x4F) return 0; // Unimplemented memory locations
-        if (addr == Address.INDF) return get(get(Address.FSR)); // Indirect addressing
-        if (addr == Address.PCLATH) return 0; // PCLATH is write only
-
-        if (addr != Address.PCL &&      // These registers are the same for every bank
-            addr != Address.STATUS &&
-            addr != Address.FSR &&
-            addr != Address.PCLATH &&
-            addr != Address.INTCON &&
-            addr < 0x0C)
-        {
-            addr = (byte) (addr + (Bank << 7));
-        }
-        
-        return (byte) memory[addr];
-    }
-
-    public void set(byte addr, byte value)
-    {
-        if (addr == 0x07 || addr > 0x4F) return; // Unimplemented memory locations
-        if (addr == Address.INDF) set(get(Address.FSR), value); // Indirect addressing
-
-        if (addr != Address.PCL &&      // These registers are the same for every bank
-            addr != Address.STATUS &&
-            addr != Address.FSR &&
-            addr != Address.PCLATH &&
-            addr != Address.INTCON &&
-            addr < 0x0C)
-        {
-            addr = (byte) (addr + (Bank << 7));
-        }
-
-        memory[addr] = value;
-    }
 
     public byte this[byte addr] // Overload indexing operator of memory object
     {
-        get => get(addr);
+        get
+        {
+            if (addr == 0x07 || addr > 0x4F) return 0; // Unimplemented memory locations
+            if (addr == Address.INDF) return this[this[Address.FSR]]; // Indirect addressing
+            if (addr == Address.PCLATH) return 0; // PCLATH is write only
+
+            if (addr != Address.PCL &&      // These registers are the same for every bank
+                addr != Address.STATUS &&
+                addr != Address.FSR &&
+                addr != Address.PCLATH &&
+                addr != Address.INTCON &&
+                addr < 0x0C)
+            {
+                addr = (byte) (addr + (Bank << 7));
+            }
+
+            return (byte) memory[addr];
+        }
         set
         {
-            set(addr, value);
+            if (addr == 0x07 || addr > 0x4F) return; // Unimplemented memory locations
+            if (addr == Address.INDF) this[this[Address.FSR]] = value; // Indirect addressing
+
+            if (addr != Address.PCL &&      // These registers are the same for every bank
+                addr != Address.STATUS &&
+                addr != Address.FSR &&
+                addr != Address.PCLATH &&
+                addr != Address.INTCON &&
+                addr < 0x0C)
+            {
+                addr = (byte) (addr + (Bank << 7));
+            }
+
+            memory[addr] = value;
         }
     }
+
 
     public byte w_Register
     {
