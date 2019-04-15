@@ -19,7 +19,7 @@ public static class FileManager
     public static List<string> getLines(string filename)
     {
         var lines = new List<string>();
-        var reader = new StreamReader(PATH + filename, Encoding.GetEncoding(1252));
+        var reader = new StreamReader(PATH + filename);
         string line;
 
         while((line = reader.ReadLine()) != null)
