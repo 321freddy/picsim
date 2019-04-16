@@ -9,9 +9,13 @@ namespace Commands
 {
     class RRF : Command
     {
+        private byte address;
+        private bool writeToMemory;
+
         public RRF(ushort opcode) : base(opcode)
         {
-            Debug.Log("RRF");
+            address = (byte)Bit.mask(opcode, 7);
+            writeToMemory = Bit.get(opcode, 7) == 1;
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
@@ -23,6 +27,21 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running RRF");
+            int result = memory[address];
+            result = Bit.setTo(result, 8, memory.Carry);
+            memory.Carry = (byte)Bit.get(result, 0);
+            result >>= 1;
+
+            if (writeToMemory)
+            {
+                memory[address] = (byte)result;
+            }
+            else
+            {
+                memory.w_Register = (byte)result;
+            }
+
+            base.run(memory); // Increase PC
         }
     }
 }

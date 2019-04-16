@@ -28,7 +28,7 @@ namespace Commands
         {
             Debug.Log("running SUBWF");
             int result = memory[address] - memory.w_Register;
-            Debug.Log("RESULT SUBWF" + result);
+
             if (result >= 0)
             {
                 memory.Carry = 1;
