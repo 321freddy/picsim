@@ -9,9 +9,13 @@ namespace Commands
 {
     class INCFSZ : Command
     {
+        private byte address;
+        private bool writeToMemory;
+
         public INCFSZ(ushort opcode) : base(opcode)
         {
-            Debug.Log("INCFSZ");
+            address = (byte)Bit.mask(opcode, 7);
+            writeToMemory = Bit.get(opcode, 7) == 1;
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
@@ -23,6 +27,24 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running INCFSZ");
+            int result = memory[address] + 1;
+            
+            // Skip if zero
+            if (((byte)result) == 0)
+            {
+                memory.ProgramCounter++;
+            }
+
+            if (writeToMemory)
+            {
+                memory[address] = (byte)result;
+            }
+            else
+            {
+                memory.w_Register = (byte)result;
+            }
+
+            base.run(memory); // Increase PC
         }
     }
 }
