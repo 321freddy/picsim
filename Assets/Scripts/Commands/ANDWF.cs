@@ -30,7 +30,7 @@ namespace Commands
             int result = memory[address] & memory.w_Register;
 
             // Update Zero Flag
-            if (result == 0)
+            if (((byte)result) == 0)
             {
                 memory.ZeroFlag = 1;
             }

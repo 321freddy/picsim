@@ -45,7 +45,7 @@ namespace Commands
             }
 
             // Update Zero Flag
-            if (result == 0)
+            if (((byte)result) == 0)
             {
                 memory.ZeroFlag = 1;
             }
