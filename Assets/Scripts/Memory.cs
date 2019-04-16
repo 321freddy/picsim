@@ -13,7 +13,32 @@ class Memory
     private ushort[] stack = new ushort[8];
     private int stackPos = 0;
 
-    
+
+    public Memory()
+    {
+        Reset();
+    }
+
+    public void Reset() 
+    {
+        var oldMemory = memory;
+        wReg = 0;
+        memory = new ushort[0x100];
+        stack = new ushort[8];
+        stackPos = 0;
+
+        memory[Address.TMR0] = oldMemory[Address.TMR0];
+        memory[Address.FSR] = oldMemory[Address.FSR];
+        memory[Address.PORTA] = oldMemory[Address.PORTA];
+        memory[Address.PORTB] = oldMemory[Address.PORTB];
+        memory[Address.EEDATA] = oldMemory[Address.EEDATA];
+        memory[Address.EEADR] = oldMemory[Address.EEADR];
+        RBIF = (byte) Bit.get(oldMemory[Address.INTCON], Bit.RBIF);
+        ZeroFlag = (byte) Bit.get(oldMemory[Address.STATUS], Bit.Z);
+        Carry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.C);
+        DigitCarry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.DC);
+    }
+
     public void pushStack(ushort value)
     {
         stack[stackPos] = value;
@@ -141,6 +166,24 @@ class Memory
         set
         {
             Status = (byte) Bit.setTo(Status, Bit.DC, value);
+        }
+    }
+
+    public byte INTCON
+    {
+        get => (byte) memory[Address.INTCON];
+        set
+        {
+            memory[Address.INTCON] = value;
+        }
+    }
+
+    public byte RBIF
+    {
+        get => (byte) Bit.get(INTCON, Bit.RBIF);
+        set
+        {
+            Status = (byte) Bit.setTo(INTCON, Bit.RBIF, value);
         }
     }
 
