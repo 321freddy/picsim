@@ -9,9 +9,13 @@ namespace Commands
 {
     class BTFSC : Command
     {
+        private byte address;
+        private int bit;
+
         public BTFSC(ushort opcode) : base(opcode)
         {
-            Debug.Log("BCF");
+            address = (byte)Bit.mask(opcode, 7);
+            bit = Bit.get(opcode, 7, 3);
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
@@ -23,6 +27,13 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running BTFSC");
+            
+            if (Bit.get(memory[address], bit) == 0)
+            {
+                memory.ProgramCounter++;
+            }
+
+            base.run(memory); // Increase PC
         }
     }
 }

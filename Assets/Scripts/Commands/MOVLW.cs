@@ -25,6 +25,17 @@ namespace Commands
         {
             Debug.Log("running MOVLW");
             memory.w_Register = literal;
+
+            // Update Zero Flag
+            if (literal == 0)
+            {
+                memory.ZeroFlag = 1;
+            }
+            else
+            {
+                memory.ZeroFlag = 0;
+            }
+
             base.run(memory); // Increase PC
         }
     }

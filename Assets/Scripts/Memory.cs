@@ -11,53 +11,86 @@ class Memory
     private byte wReg = 0;
     private ushort[] memory = new ushort[0x100];
     private ushort[] stack = new ushort[8];
-    private byte stackPos = 0;
+    private int stackPos = 0;
 
-    public byte get(byte addr)
+
+    public Memory()
     {
-        if (addr == 0x07 || addr > 0x4F) return 0; // Unimplemented memory locations
-        if (addr == Address.INDF) return get(get(Address.FSR)); // Indirect addressing
-        if (addr == Address.PCLATH) return 0; // PCLATH is write only
-
-        if (addr != Address.PCL &&      // These registers are the same for every bank
-            addr != Address.STATUS &&
-            addr != Address.FSR &&
-            addr != Address.PCLATH &&
-            addr != Address.INTCON &&
-            addr < 0x0C)
-        {
-            addr = (byte) (addr + (Bank << 7));
-        }
-        
-        return (byte) memory[addr];
+        Reset();
     }
 
-    public void set(byte addr, byte value)
+    public void Reset() 
     {
-        if (addr == 0x07 || addr > 0x4F) return; // Unimplemented memory locations
-        if (addr == Address.INDF) set(get(Address.FSR), value); // Indirect addressing
+        var oldMemory = memory;
+        wReg = 0;
+        memory = new ushort[0x100];
+        stack = new ushort[8];
+        stackPos = 0;
 
-        if (addr != Address.PCL &&      // These registers are the same for every bank
-            addr != Address.STATUS &&
-            addr != Address.FSR &&
-            addr != Address.PCLATH &&
-            addr != Address.INTCON &&
-            addr < 0x0C)
-        {
-            addr = (byte) (addr + (Bank << 7));
-        }
+        memory[Address.TMR0] = oldMemory[Address.TMR0];
+        memory[Address.FSR] = oldMemory[Address.FSR];
+        memory[Address.PORTA] = oldMemory[Address.PORTA];
+        memory[Address.PORTB] = oldMemory[Address.PORTB];
+        memory[Address.EEDATA] = oldMemory[Address.EEDATA];
+        memory[Address.EEADR] = oldMemory[Address.EEADR];
+        RBIF = (byte) Bit.get(oldMemory[Address.INTCON], Bit.RBIF);
+        ZeroFlag = (byte) Bit.get(oldMemory[Address.STATUS], Bit.Z);
+        Carry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.C);
+        DigitCarry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.DC);
+    }
 
-        memory[addr] = value;
+    public void pushStack(ushort value)
+    {
+        stack[stackPos] = value;
+        stackPos = (stackPos + 1) % stack.Length;
+    }
+
+    public ushort popStack()
+    {
+        stackPos = (stackPos + stack.Length - 1) % stack.Length;
+        return stack[stackPos];
     }
 
     public byte this[byte addr] // Overload indexing operator of memory object
     {
-        get => get(addr);
+        get
+        {
+            if (addr == 0x07 || addr > 0x4F) return 0; // Unimplemented memory locations
+            if (addr == Address.INDF) return this[this[Address.FSR]]; // Indirect addressing
+            if (addr == Address.PCLATH) return 0; // PCLATH is write only
+
+            if (addr != Address.PCL &&      // These registers are the same for every bank
+                addr != Address.STATUS &&
+                addr != Address.FSR &&
+                addr != Address.PCLATH &&
+                addr != Address.INTCON &&
+                addr < 0x0C)
+            {
+                addr = (byte) (addr + (Bank << 7)); // Include bank bit in address
+            }
+
+            return (byte) memory[addr]; // Read value
+        }
         set
         {
-            set(addr, value);
+            if (addr == 0x07 || addr > 0x4F) return; // Unimplemented memory locations
+            if (addr == Address.INDF) this[this[Address.FSR]] = value; // Indirect addressing
+
+            if (addr != Address.PCL &&      // These registers are the same for every bank
+                addr != Address.STATUS &&
+                addr != Address.FSR &&
+                addr != Address.PCLATH &&
+                addr != Address.INTCON &&
+                addr < 0x0C)
+            {
+                addr = (byte) (addr + (Bank << 7)); // Include bank bit in address
+            }
+
+            memory[addr] = value; // Write value
         }
     }
+
+
 
     public byte w_Register
     {
@@ -65,23 +98,15 @@ class Memory
         set
         {
             wReg = value;
-            if (wReg == 0)
-            {
-                ZeroFlag = 1;
-            }
-            else
-            {
-                ZeroFlag = 0;
-            }
         }
     }
 
     public byte Status
     {
-        get => this[Address.STATUS];
+        get => (byte) memory[Address.STATUS];
         set
         {
-            this[Address.STATUS] = value;
+            memory[Address.STATUS] = value;
         }
     }
 
@@ -96,6 +121,24 @@ class Memory
         set
         {
             memory[Address.PCL] = (ushort) Bit.mask(value, 13);
+        }
+    }
+
+    public byte PCL
+    {
+        get => (byte) memory[Address.PCL];
+        set
+        {
+            memory[Address.PCL] = value;
+        }
+    }
+
+    public byte PCLATH
+    {
+        get => (byte) memory[Address.PCLATH];
+        set
+        {
+            memory[Address.PCLATH] = value;
         }
     }
 
@@ -123,6 +166,24 @@ class Memory
         set
         {
             Status = (byte) Bit.setTo(Status, Bit.DC, value);
+        }
+    }
+
+    public byte INTCON
+    {
+        get => (byte) memory[Address.INTCON];
+        set
+        {
+            memory[Address.INTCON] = value;
+        }
+    }
+
+    public byte RBIF
+    {
+        get => (byte) Bit.get(INTCON, Bit.RBIF);
+        set
+        {
+            Status = (byte) Bit.setTo(INTCON, Bit.RBIF, value);
         }
     }
 

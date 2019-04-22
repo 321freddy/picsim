@@ -66,7 +66,7 @@ class Simulation
 
     public void Reset()
     {
-        Memory = new Memory();
+        Memory.Reset();
     }
 
 }

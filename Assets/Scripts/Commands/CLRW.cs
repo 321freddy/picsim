@@ -11,7 +11,7 @@ namespace Commands
     {
         public CLRW(ushort opcode) : base(opcode)
         {
-            Debug.Log("CLRW");
+
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
@@ -23,6 +23,9 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running CLRW");
+            memory.w_Register = 0;
+            memory.ZeroFlag = 1;
+            base.run(memory); // Increase PC
         }
     }
 }

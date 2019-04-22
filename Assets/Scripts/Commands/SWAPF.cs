@@ -9,9 +9,13 @@ namespace Commands
 {
     class SWAPF : Command
     {
+        private byte address;
+        private bool writeToMemory;
+
         public SWAPF(ushort opcode) : base(opcode)
         {
-            Debug.Log("SWAPF");
+            address = (byte)Bit.mask(opcode, 7);
+            writeToMemory = Bit.get(opcode, 7) == 1;
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
@@ -23,6 +27,21 @@ namespace Commands
         public override void run(Memory memory)
         {
             Debug.Log("running SWAPF");
+            var variable = memory[address];
+            var lower = Bit.get(variable, 0, 4);
+            var upper = Bit.get(variable, 4, 4);
+            var result = (lower << 4) + upper;
+
+            if (writeToMemory)
+            {
+                memory[address] = (byte)result;
+            }
+            else
+            {
+                memory.w_Register = (byte)result;
+            }
+
+            base.run(memory); // Increase PC
         }
     }
 }
