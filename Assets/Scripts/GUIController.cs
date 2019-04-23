@@ -105,6 +105,9 @@ public class GUIController : MonoBehaviour
             codeLine.setRunning(lineNum == currentCommand.Line); // Set color to green if first command
             codeLines[lineNum] = codeLine;
             lineNum++;
+
+            // Update width
+            codeLine.GetComponent<LayoutElement>().minWidth = codeContainer.GetComponentInParent<ScrollRect>().GetComponent<RectTransform>().rect.width - 15 - 20;
         }
 
         // Set command references on code line objects
@@ -137,6 +140,8 @@ public class GUIController : MonoBehaviour
             // Program reached end
             setSimulationRunning(false);
         }
+
+        
     }
 
     // Update is called once per frame
