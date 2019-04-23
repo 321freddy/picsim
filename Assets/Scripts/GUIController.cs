@@ -8,6 +8,7 @@ using System;
 public class GUIController : MonoBehaviour
 {
     public Dropdown fileDropdown;
+    public ScrollRect scrollRect;
     public GameObject codeContainer;
     public GameObject codeLineTemplate;
     public GameObject goButton;
@@ -24,6 +25,8 @@ public class GUIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        scrollRect = scrollRect ?? codeContainer.GetComponentInParent<ScrollRect>();
+
         Screen.SetResolution(1280, 720, false); 
 
         // Populate file dropdown
@@ -81,6 +84,22 @@ public class GUIController : MonoBehaviour
         GameObject.Find("IRP (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.IRP), 2);
     }
 
+    private void updateScroll()
+    {
+        if (Input.GetMouseButton(0)) return;
+
+        var line = getCodeLine(currentCommand).GetComponent<RectTransform>();
+        var container = codeContainer.GetComponent<RectTransform>();
+        var viewport = scrollRect.GetComponent<RectTransform>();
+        var lineY = -line.localPosition.y;
+        var containerY = container.localPosition.y;
+
+        if (lineY + 10 > containerY + viewport.rect.height)
+            scrollRect.verticalNormalizedPosition = 1f - Mathf.Clamp01(lineY / container.rect.height);
+        else if (lineY - 10 < containerY)
+            scrollRect.verticalNormalizedPosition = 1f - Mathf.Clamp01(lineY / container.rect.height);
+    }
+
     public void onFileSelected()
     {
         // clear file view
@@ -107,7 +126,7 @@ public class GUIController : MonoBehaviour
             lineNum++;
 
             // Update width
-            codeLine.GetComponent<LayoutElement>().minWidth = codeContainer.GetComponentInParent<ScrollRect>().GetComponent<RectTransform>().rect.width - 15 - 20;
+            codeLine.GetComponent<LayoutElement>().minWidth = scrollRect.GetComponent<RectTransform>().rect.width - 15 - 20;
         }
 
         // Set command references on code line objects
@@ -121,6 +140,7 @@ public class GUIController : MonoBehaviour
         stepInButton.GetComponent<Button>().interactable = true;
         stepOutButton.GetComponent<Button>().interactable = true;
         resetButton.GetComponent<Button>().interactable = true;
+        scrollRect.verticalNormalizedPosition = 1f;
     }
 
     public void stepIn()
@@ -134,14 +154,13 @@ public class GUIController : MonoBehaviour
             getCodeLine(currentCommand).setRunning(true);
 
             updateRegisterDisplay();
+            updateScroll();
         }
         else
         {
             // Program reached end
             setSimulationRunning(false);
         }
-
-        
     }
 
     // Update is called once per frame
@@ -193,5 +212,6 @@ public class GUIController : MonoBehaviour
         setSimulationRunning(false);
         currentCommand = simulation.getCurrentCommand();
         getCodeLine(currentCommand).setRunning(true); // Mark first command
+        updateScroll();
     }
 }
