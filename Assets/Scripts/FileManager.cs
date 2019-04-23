@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 public static class FileManager
 {
@@ -12,7 +14,7 @@ public static class FileManager
     public static FileInfo[] listAll()
     {
         var info = new DirectoryInfo(PATH);
-        return info.GetFiles();
+        return info.GetFiles().OrderBy(x => x.Name, new NaturalStringComparer()).ToArray();
     }
 
     // Returns list of all lines in a file

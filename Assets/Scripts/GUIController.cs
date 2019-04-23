@@ -7,11 +7,6 @@ using System;
 
 public class GUIController : MonoBehaviour
 {
-    public Color COLOR_DEFAULT;
-    public Color COLOR_WAS_RUNNING;
-    public Color COLOR_RUNNING;
-    public Color COLOR_BREAKPOINT;
-
     public Dropdown fileDropdown;
     public GameObject codeContainer;
     public GameObject codeLineTemplate;
@@ -29,7 +24,7 @@ public class GUIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Screen.SetResolution(1280, 720, false);
+        Screen.SetResolution(1280, 720, false); 
 
         // Populate file dropdown
         foreach (var file in FileManager.listAll())
@@ -55,16 +50,18 @@ public class GUIController : MonoBehaviour
         }
     }
 
-    private void setCommandColor(Command cmd, Color color)
+    private CodeLineController getCodeLine(Command cmd)
     {
         if (cmd != null)
         {
             var obj = codeContainer.transform.GetChild(cmd.Line);
             if (obj != null)
             {
-                obj.GetComponent<Text>().color = color;
+                return obj.GetComponent<CodeLineController>();
             }
         }
+
+        return null;
     }
 
     private void updateRegisterDisplay()
@@ -100,13 +97,20 @@ public class GUIController : MonoBehaviour
         currentCommand = simulation.getCurrentCommand();
 
         var lineNum = 0;
+        var codeLines = new CodeLineController[lines.Count];
         foreach (string line in lines) // Populate code box
         {
-            var lineObject = Instantiate(codeLineTemplate, codeContainer.transform).GetComponent<Text>();
-            lineObject.text = line;
-
-            if (lineNum == currentCommand.Line) lineObject.color = COLOR_RUNNING; // Set color to green if first command
+            var codeLine = Instantiate(codeLineTemplate, codeContainer.transform).GetComponent<CodeLineController>();
+            codeLine.Text = line;
+            codeLine.setRunning(lineNum == currentCommand.Line); // Set color to green if first command
+            codeLines[lineNum] = codeLine;
             lineNum++;
+        }
+
+        // Set command references on code line objects
+        foreach (var cmd in simulation.Commands)
+        {
+            codeLines[cmd.Line].Command = cmd;
         }
 
         goButton.GetComponent<Button>().interactable = true;
@@ -122,9 +126,9 @@ public class GUIController : MonoBehaviour
         if (success)
         {
             // Update GUI
-            setCommandColor(currentCommand, COLOR_WAS_RUNNING); // Update next command color to green
+            getCodeLine(currentCommand).setRunning(false); // Update next command color to green
             currentCommand = simulation.getCurrentCommand();
-            setCommandColor(currentCommand, COLOR_RUNNING);
+            getCodeLine(currentCommand).setRunning(true);
 
             updateRegisterDisplay();
         }
@@ -141,6 +145,7 @@ public class GUIController : MonoBehaviour
         if (simulationRunning)
         {
             stepIn();
+            if (simulation.reachedBreakpoint()) setSimulationRunning(false);
         }
     }
 
@@ -174,14 +179,14 @@ public class GUIController : MonoBehaviour
         simulation.Reset();
 
         // Reset code color
-        foreach (var codeLine in codeContainer.transform.GetComponentsInChildren<Text>())
+        foreach (var codeLine in codeContainer.GetComponentsInChildren<CodeLineController>())
         {
-            codeLine.color = COLOR_DEFAULT;
+            codeLine.setRunning(false);
         }
 
         updateRegisterDisplay();
         setSimulationRunning(false);
         currentCommand = simulation.getCurrentCommand();
-        setCommandColor(currentCommand, COLOR_RUNNING); // Mark first command
+        getCodeLine(currentCommand).setRunning(true); // Mark first command
     }
 }

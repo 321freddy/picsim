@@ -53,15 +53,12 @@ class Simulation
         return true;
     }
 
-    public void setBreakpoint()
-    {
-        // ...
-    }
-
     public bool reachedBreakpoint()
     {
-        // ...
-        return false;
+        var cmd = getCurrentCommand();
+        if (cmd == null) return false;
+
+        return cmd.breakpoint;
     }
 
     public void Reset()
