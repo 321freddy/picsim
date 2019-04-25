@@ -10,7 +10,7 @@ class Memory
 {
     private byte wReg = 0;
     private ushort[] memory = new ushort[0x100];
-    private ushort[] stack = new ushort[8];
+    private ushort[] stack = new ushort[8]; //Empfehlung von Herrn Lehmann, INT als Datentyp
     private int stackPos = 0;
 
 

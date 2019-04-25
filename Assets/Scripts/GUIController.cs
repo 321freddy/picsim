@@ -184,4 +184,8 @@ public class GUIController : MonoBehaviour
         currentCommand = simulation.getCurrentCommand();
         setCommandColor(currentCommand, COLOR_RUNNING); // Mark first command
     }
+    public void onHelpClicked()
+    {
+        System.Diagnostics.Process.Start("Help.jpg");
+    }
 }
