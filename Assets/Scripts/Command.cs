@@ -6,9 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-abstract class Command
+public abstract class Command
 {
     public int Line { get; private set; } // Line number in original source code
+    public bool breakpoint = false;
 
     public static Command Parse(string command, int line)
     {

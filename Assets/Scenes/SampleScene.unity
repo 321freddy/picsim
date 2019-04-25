@@ -504,7 +504,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 20}
+  m_SizeDelta: {x: 0, y: 15}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &77842695
 MonoBehaviour:
@@ -2524,7 +2524,7 @@ RectTransform:
   m_Father: {fileID: 473760201}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -0.0000673069, y: -0.000010279696}
   m_SizeDelta: {x: 0, y: 0}
@@ -3601,8 +3601,8 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 5fd6a846de60c2846860a2dbdc6a15a0, type: 3}
-  m_Type: 3
-  m_PreserveAspect: 0
+  m_Type: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -5922,7 +5922,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 0}
+  m_SizeDelta: {x: 15, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1331209714
 MonoBehaviour:
@@ -5964,7 +5964,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1390718397}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8754,6 +8754,7 @@ MonoBehaviour:
   COLOR_RUNNING: {r: 0.60784316, g: 0.72156864, b: 0.6431373, a: 1}
   COLOR_BREAKPOINT: {r: 0.87058824, g: 0.40784314, b: 0.40784314, a: 1}
   fileDropdown: {fileID: 890431575}
+  scrollRect: {fileID: 0}
   codeContainer: {fileID: 599018849}
   codeLineTemplate: {fileID: 9123752305013872101, guid: fad91730a4a16d74d8a6b3a5da62b3c3,
     type: 3}

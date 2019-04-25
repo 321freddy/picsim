@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-class Memory
+public class Memory
 {
     private byte wReg = 0;
     private ushort[] memory = new ushort[0x100];
