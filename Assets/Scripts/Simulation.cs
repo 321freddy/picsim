@@ -65,5 +65,4 @@ class Simulation
     {
         Memory.Reset();
     }
-
 }

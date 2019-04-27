@@ -8,6 +8,7 @@ using System;
 public class GUIController : MonoBehaviour
 {
     public Dropdown fileDropdown;
+    public Dropdown freqDropdown;
     public ScrollRect scrollRect;
     public GameObject codeContainer;
     public GameObject codeLineTemplate;
@@ -21,6 +22,8 @@ public class GUIController : MonoBehaviour
     private Command currentCommand = null;
     private bool simulationRunning = false;
 
+    public static int frequency_string;
+    public double total_time = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -108,6 +111,9 @@ public class GUIController : MonoBehaviour
         var filename = fileDropdown.options[fileDropdown.value].text; // Get file name
         Debug.Log("selected file " + filename);
 
+        TimerReset();   //Reset Timer everytime the selectedFile is changed
+        onFrequencySelected();  //Get act. frequency
+
         var lines = FileManager.getLines(filename); // Read file
         simulation = Simulation.CreateFromProgram(lines); // Init simulation
 
@@ -143,6 +149,12 @@ public class GUIController : MonoBehaviour
         scrollRect.verticalNormalizedPosition = 1f;
     }
 
+    public void onFrequencySelected()
+    {
+        frequency_string = freqDropdown.value; // Get frequency index from dropdown menue not actual frequency
+       //Debug.Log(frequency_string);
+    }
+
     public void stepIn()
     {
         var success = simulation.step(); // Run command
@@ -152,6 +164,13 @@ public class GUIController : MonoBehaviour
             getCodeLine(currentCommand).setRunning(false); // Update next command color to green
             currentCommand = simulation.getCurrentCommand();
             getCodeLine(currentCommand).setRunning(true);
+
+            /* Update Timer
+             * Every time a step is done by the GUI, the function Timer.setFrequency is used to get the right value for the timer, depending on the used frequency 
+             */
+            Timer.setFrequency();
+            total_time = total_time + Timer.convertion_microseconds;
+            GameObject.Find("Laufzeit").GetComponent<Text>().text = total_time.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
 
             updateRegisterDisplay();
             updateScroll();
@@ -170,6 +189,7 @@ public class GUIController : MonoBehaviour
         {
             stepIn();
             if (simulation.reachedBreakpoint()) setSimulationRunning(false);
+
         }
     }
 
@@ -202,6 +222,8 @@ public class GUIController : MonoBehaviour
         Debug.Log("Reset program");
         simulation.Reset();
 
+        TimerReset();
+
         // Reset code color
         foreach (var codeLine in codeContainer.GetComponentsInChildren<CodeLineController>())
         {
@@ -217,5 +239,10 @@ public class GUIController : MonoBehaviour
     public void onHelpClicked()
     {
         System.Diagnostics.Process.Start("Help.jpg");
+    }
+    public void TimerReset()    //Reset timer and total time
+    {
+        GameObject.Find("Laufzeit").GetComponent<Text>().text = Convert.ToString("0.00") + " µs";
+        total_time = 0;
     }
 }
