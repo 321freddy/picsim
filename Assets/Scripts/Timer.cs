@@ -6,71 +6,72 @@ using System.Threading.Tasks;
 
     public class Timer
     {
-        public static double convertion_microseconds;
+        public static double microseconds_per_step;
 
         public static void setFrequency()
         {
             switch (GUIController.frequency_string + 1)
             {
                 case 1:
-                    convertion_microseconds = 122.070312;  break; // 32.xx KHz
+                    microseconds_per_step = 122.070312;  break;//  0.032768 MHz
                 case 2:
-                    convertion_microseconds = 8.0; break;   // 0.5 MHz
+                    microseconds_per_step = 8.0; break;        //  0.500000 MHz
                 case 3:
-                    convertion_microseconds = 1.0; break;   // 1 MHz
+                    microseconds_per_step = 4.0; break;        //  1.000000 MHz
                 case 4:
-                    convertion_microseconds = 1.0; break;   // 2MHz
+                    microseconds_per_step = 2.0; break;        //  2.000000 MHz
                 case 5:
-                    convertion_microseconds = 1.0; break;   // 2.xx MHz
+                    microseconds_per_step = 1.627604; break;   //  2.457600 MHz
                 case 6:
-                    convertion_microseconds = 1.0; break;   // 3 MHz
+                    microseconds_per_step = 1.333333; break;   //  3.000000 MHz
                 case 7: 
-                    convertion_microseconds = 1.0; break;    // 3.xx MHz
+                    microseconds_per_step = 1.220703; break;   //  3.276800 MHz
                 case 8:
-                    convertion_microseconds = 1.0; break;   // 3.yy MHz
+                    microseconds_per_step = 1.086956; break;   //  3.680000 MHz
                 case 9:
-                    convertion_microseconds = 1.0; break;   // 3.zz Mhz
+                    microseconds_per_step = 1.085066; break;   //  3.686411 Mhz
                 case 10:
-                    convertion_microseconds = 1.0; break;   // 4 MHz
-//=======================================================
+                    microseconds_per_step = 1.0; break;        //  4.000000 MHz
+//===============================================================================
                 case 11:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.976562; break;   //  4.096000 MHz
                 case 12:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.953674; break;   //  4.194304 MHz
                 case 13:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.902197; break;   //  4.433619 MHz
                 case 14:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.813802; break;   //  4.915200 MHz
                 case 15:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.8; break;        //  5.000000 MHz
                 case 16:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.666666; break;   //  6.000000 MHz
                 case 17:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.64; break;       //  6.250000 MHz
                 case 18:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.610351; break;   //  6.553600 MHz
                 case 19:
-                    convertion_microseconds = 0.5; break;   // 8 MHz
+                    microseconds_per_step = 0.5; break;        //  8.000000 MHz
                 case 20:
-                    convertion_microseconds = 1.0; break;
-//=======================================================
+                    microseconds_per_step = 0.4; break;        // 10.000000 MHz
+//===============================================================================
                 case 21:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.333333; break;   // 12.000000 MHz
                 case 22:
-                    convertion_microseconds = 0.25; break;   // 16 Hz
+                    microseconds_per_step = 0.25; break;       // 16.000000 MHz
                 case 23:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.2; break;        // 20.000000 MHz
                 case 24:
-                    convertion_microseconds = 1.0; break;
+                    microseconds_per_step = 0.166666; break;   // 24.000000 MHz
                 case 25:
-                    convertion_microseconds = 0.125; break;  // 32 MHz
+                    microseconds_per_step = 0.125; break;      // 32.000000 MHz
                 case 26:
-                    convertion_microseconds = 0.1; break;    // 40 MHz
+                    microseconds_per_step = 0.1; break;        // 40.000000 MHz
                 case 27:
-                    convertion_microseconds = 0.05; break;   // 80 MHz
-//=======================================================
+                    microseconds_per_step = 0.05; break;       // 80.000000 MHz
+//===============================================================================
                 default:
-                    convertion_microseconds = 69; break;
+                    microseconds_per_step = 1.0; break;        // 4.000000 MHz 
+                                                                 // DEFAULT
             }
         }
 }

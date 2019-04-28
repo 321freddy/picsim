@@ -165,15 +165,17 @@ public class GUIController : MonoBehaviour
             currentCommand = simulation.getCurrentCommand();
             getCodeLine(currentCommand).setRunning(true);
 
-            /* Update Timer
-             * Every time a step is done by the GUI, the function Timer.setFrequency is used to get the right value for the timer, depending on the used frequency 
-             */
-            Timer.setFrequency();
-            total_time = total_time + Timer.convertion_microseconds;
-            GameObject.Find("Laufzeit").GetComponent<Text>().text = total_time.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
-
             updateRegisterDisplay();
             updateScroll();
+
+            /* Update Timer and sleep time:
+             * Every time a step is done by the GUI, the function Timer.setFrequency is used to get the right value for the timer, depending on the used frequency 
+             * Sleep is used to slow down the GUI a bit, only for optics, not functional
+             */
+            Timer.setFrequency();
+            total_time = total_time + Timer.microseconds_per_step;
+            GameObject.Find("Laufzeit").GetComponent<Text>().text = total_time.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
+            System.Threading.Thread.Sleep(100); //Sleep for 100ms
         }
         else
         {
