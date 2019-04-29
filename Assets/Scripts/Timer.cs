@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-    public class Timer
+    public static class Timer
     {
         public static double microseconds_per_step;
 
-        public static void setFrequency()
+        public static void setFrequency(int frequencyIndex)
         {
-            switch (GUIController.frequency_string + 1)
+            switch (frequencyIndex + 1)
             {
                 case 1:
                     microseconds_per_step = 122.070312;  break;//  0.032768 MHz

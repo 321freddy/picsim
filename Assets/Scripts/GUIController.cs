@@ -22,8 +22,8 @@ public class GUIController : MonoBehaviour
     private Command currentCommand = null;
     private bool simulationRunning = false;
 
-    public static int frequency_string;
-    public double total_time = 0;
+    private int frequencyIndex;
+    private double total_time = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -151,8 +151,8 @@ public class GUIController : MonoBehaviour
 
     public void onFrequencySelected()
     {
-        frequency_string = freqDropdown.value; // Get frequency index from dropdown menue not actual frequency
-       //Debug.Log(frequency_string);
+        frequencyIndex = freqDropdown.value; // Get frequency index from dropdown menue not actual frequency
+       //Debug.Log(frequencyIndex);
     }
 
     public void stepIn()
@@ -172,10 +172,10 @@ public class GUIController : MonoBehaviour
              * Every time a step is done by the GUI, the function Timer.setFrequency is used to get the right value for the timer, depending on the used frequency 
              * Sleep is used to slow down the GUI a bit, only for optics, not functional
              */
-            Timer.setFrequency();
-            total_time = total_time + Timer.microseconds_per_step;
+            Timer.setFrequency(frequencyIndex);
+            total_time += Timer.microseconds_per_step;
             GameObject.Find("Laufzeit").GetComponent<Text>().text = total_time.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
-            System.Threading.Thread.Sleep(100); //Sleep for 100ms
+            //System.Threading.Thread.Sleep(100); //Sleep for 100ms
         }
         else
         {
