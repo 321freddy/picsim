@@ -25,6 +25,7 @@ namespace Commands
         {
             Debug.Log("running GOTO");
             memory.ProgramCounter = literal;
+            base.run(memory);
             return 2;
         }
     }

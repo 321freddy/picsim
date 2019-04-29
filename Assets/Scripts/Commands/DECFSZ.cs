@@ -42,9 +42,11 @@ namespace Commands
             if (((byte)result) == 0)
             {
                 memory.ProgramCounter += 2;
+                base.run(memory);
                 return 2;
             }
 
+            base.run(memory);
             return 1;
         }
     }

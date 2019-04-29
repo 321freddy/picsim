@@ -23,6 +23,7 @@ namespace Commands
         public override int run(Memory memory)
         {
             Debug.Log("running RETFIE");
+            base.run(memory);
             return 2;
         }
     }

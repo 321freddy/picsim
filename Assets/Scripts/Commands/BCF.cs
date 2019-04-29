@@ -28,7 +28,8 @@ namespace Commands
         {
             Debug.Log("running BCF");
             memory[address] = (byte)Bit.clear(memory[address], bit);
-            return base.run(memory); // Increase PC
+            memory.ProgramCounter++;
+            return base.run(memory);
         }
     }
 }

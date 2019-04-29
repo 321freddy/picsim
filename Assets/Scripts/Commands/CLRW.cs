@@ -25,7 +25,8 @@ namespace Commands
             Debug.Log("running CLRW");
             memory.w_Register = 0;
             memory.ZeroFlag = 1;
-            return base.run(memory); // Increase PC
+            memory.ProgramCounter++;
+            return base.run(memory);
         }
     }
 }

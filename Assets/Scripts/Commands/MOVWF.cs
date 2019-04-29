@@ -25,7 +25,8 @@ namespace Commands
         {
             Debug.Log("running MOVWF");
             memory[address] = memory.w_Register;
-            return base.run(memory); // Increase PC
+            memory.ProgramCounter++;
+            return base.run(memory);
         }
     }
 }

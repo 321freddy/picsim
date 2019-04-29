@@ -26,6 +26,7 @@ namespace Commands
             Debug.Log("running CALL");
             memory.pushStack((byte) (memory.ProgramCounter + 1));
             memory.ProgramCounter = literal;
+            base.run(memory);
             return 2;
         }
     }

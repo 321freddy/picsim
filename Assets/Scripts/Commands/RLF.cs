@@ -40,7 +40,8 @@ namespace Commands
                 memory.w_Register = (byte)result;
             }
 
-            return base.run(memory); // Increase PC
+            memory.ProgramCounter++;
+            return base.run(memory);
         }
     }
 }

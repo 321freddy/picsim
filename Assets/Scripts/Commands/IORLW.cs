@@ -36,7 +36,8 @@ namespace Commands
                 memory.ZeroFlag = 0;
             }
 
-            return base.run(memory); // Increase PC
+            memory.ProgramCounter++;
+            return base.run(memory);
         }
     }
 }

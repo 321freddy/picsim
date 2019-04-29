@@ -28,7 +28,8 @@ namespace Commands
         {
             Debug.Log("running BSF");
             memory[address] = (byte)Bit.set(memory[address], bit);
-            return base.run(memory); // Increase PC
+            memory.ProgramCounter++;
+            return base.run(memory);
         }
     }
 }

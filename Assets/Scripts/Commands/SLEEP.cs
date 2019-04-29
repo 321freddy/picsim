@@ -23,7 +23,8 @@ namespace Commands
         public override int run(Memory memory)
         {
             Debug.Log("running SLEEP");
-            return base.run(memory); // Increase PC
+            memory.ProgramCounter++;
+            return base.run(memory);
         }
     }
 }

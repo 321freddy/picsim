@@ -23,6 +23,7 @@ namespace Commands
         {
             Debug.Log("running RETURN");
             memory.ProgramCounter = memory.popStack();
+            base.run(memory);
             return 2;
         }
     }

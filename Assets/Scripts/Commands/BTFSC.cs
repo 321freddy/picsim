@@ -31,9 +31,11 @@ namespace Commands
             if (Bit.get(memory[address], bit) == 0)
             {
                 memory.ProgramCounter += 2;
+                base.run(memory);
                 return 2;
             }
 
+            base.run(memory);
             return 1;
         }
     }

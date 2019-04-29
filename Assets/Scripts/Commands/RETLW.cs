@@ -26,6 +26,7 @@ namespace Commands
             Debug.Log("running RETLW");
             memory.w_Register = literal;
             memory.ProgramCounter = memory.popStack();
+            base.run(memory);
             return 2;
         }
     }

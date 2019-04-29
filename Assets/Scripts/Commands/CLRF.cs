@@ -26,7 +26,8 @@ namespace Commands
             Debug.Log("running CLRF");
             memory[address] = 0;
             memory.ZeroFlag = 1;
-            return base.run(memory); // Increase PC
+            memory.ProgramCounter++;
+            return base.run(memory);
         }
     }
 }

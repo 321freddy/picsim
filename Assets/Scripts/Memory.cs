@@ -26,7 +26,11 @@ public class Memory
         memory = new ushort[0x100];
         stack = new ushort[8];
         stackPos = 0;
+        Prescaler = 0;
+        OPTION = 0xFF;
+        
 
+        // Unchanged Registers
         memory[Address.TMR0] = oldMemory[Address.TMR0];
         memory[Address.FSR] = oldMemory[Address.FSR];
         memory[Address.PORTA] = oldMemory[Address.PORTA];
@@ -85,6 +89,11 @@ public class Memory
             {
                 addr = (byte) (addr + (Bank << 7)); // Include bank bit in address
             }
+            
+            if (Bit.get(OPTION, Bit.PSA) == 0) // Prescaler assigned to Timer0
+            {
+                if (addr == Address.TMR0) PS = 0; // Reset prescaler on TMR0 write
+            }
 
             memory[addr] = value; // Write value
         }
@@ -95,19 +104,13 @@ public class Memory
     public byte w_Register
     {
         get => wReg;
-        set
-        {
-            wReg = value;
-        }
+        set => wReg = value;
     }
 
     public byte Status
     {
         get => (byte) memory[Address.STATUS];
-        set
-        {
-            memory[Address.STATUS] = value;
-        }
+        set => memory[Address.STATUS] = value;
     }
 
     public byte Bank
@@ -118,73 +121,93 @@ public class Memory
     public ushort ProgramCounter // 13 bit
     {
         get => memory[Address.PCL];
-        set
-        {
-            memory[Address.PCL] = (ushort) Bit.mask(value, 13);
-        }
+        set => memory[Address.PCL] = (ushort) Bit.mask(value, 13);
     }
 
     public byte PCL
     {
         get => (byte) memory[Address.PCL];
-        set
-        {
-            memory[Address.PCL] = value;
-        }
+        set => memory[Address.PCL] = value;
     }
 
     public byte PCLATH
     {
         get => (byte) memory[Address.PCLATH];
-        set
-        {
-            memory[Address.PCLATH] = value;
-        }
+        set => memory[Address.PCLATH] = value;
     }
 
     public byte ZeroFlag
     {
         get => (byte) Bit.get(Status, Bit.Z);
-        set
-        {
-            Status = (byte) Bit.setTo(Status, Bit.Z, value);
-        }
+        set => Status = (byte) Bit.setTo(Status, Bit.Z, value);
     }
 
     public byte Carry
     {
         get => (byte) Bit.get(Status, Bit.C);
-        set
-        {
-            Status = (byte) Bit.setTo(Status, Bit.C, value);
-        }
+        set => Status = (byte) Bit.setTo(Status, Bit.C, value);
     }
 
     public byte DigitCarry
     {
         get => (byte) Bit.get(Status, Bit.DC);
-        set
-        {
-            Status = (byte) Bit.setTo(Status, Bit.DC, value);
-        }
+        set => Status = (byte) Bit.setTo(Status, Bit.DC, value);
     }
 
     public byte INTCON
     {
         get => (byte) memory[Address.INTCON];
-        set
-        {
-            memory[Address.INTCON] = value;
-        }
+        set => memory[Address.INTCON] = value;
     }
-
+    
     public byte RBIF
     {
         get => (byte) Bit.get(INTCON, Bit.RBIF);
-        set
-        {
-            Status = (byte) Bit.setTo(INTCON, Bit.RBIF, value);
-        }
+        set => Status = (byte) Bit.setTo(INTCON, Bit.RBIF, value);
+    }
+    
+    public byte TMR0
+    {
+        get => (byte) memory[Address.TMR0];
+        set => memory[Address.TMR0] = value;
+    }
+    
+    public byte OPTION
+    {
+        get => (byte) memory[Address.OPTION];
+        set => memory[Address.OPTION] = value;
+    }
+    
+    public byte PS
+    {
+        get => (byte) Bit.get(OPTION, Bit.PS0, 3);
+        set => memory[Address.OPTION] = (byte) (Bit.maskInverted(OPTION, 3) + Bit.mask(value, 3));
+    }
+
+    public ushort Prescaler {get; set;}
+
+    public byte PORTA
+    {
+        get => (byte) memory[Address.PORTA];
+        set => memory[Address.PORTA] = value;
+    }
+
+    public byte PORTB
+    {
+        get => (byte) memory[Address.PORTB];
+        set => memory[Address.PORTB] = value;
+    }
+
+    public byte TRISA
+    {
+        get => (byte) memory[Address.TRISA];
+        set => memory[Address.TRISA] = value;
+    }
+
+    public byte TRISB
+    {
+        get => (byte) memory[Address.TRISB];
+        set => memory[Address.TRISB] = value;
     }
 
 }
