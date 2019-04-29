@@ -41,8 +41,9 @@ public abstract class Command
         
     }
 
-    public virtual void run(Memory memory)
+    public virtual int run(Memory memory)
     {
         memory.ProgramCounter++;
+        return 1;
     }
 }

@@ -21,7 +21,7 @@ namespace Commands
             return (opcode & 0b0011_1100_0000_0000) == 0b11_0000_0000_0000;
         }
 
-        public override void run(Memory memory)
+        public override int run(Memory memory)
         {
             Debug.Log("running MOVLW");
             memory.w_Register = literal;
@@ -36,7 +36,7 @@ namespace Commands
                 memory.ZeroFlag = 0;
             }
 
-            base.run(memory); // Increase PC
+            return base.run(memory); // Increase PC
         }
     }
 }

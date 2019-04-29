@@ -44,13 +44,12 @@ class Simulation
         return null;
     }
 
-    public bool step() // Runs one command and increases PC. Returns false if program ended.
+    public int step() // Runs one command and increases PC. Returns amount of cycles executed. (0 if program ended)
     {
         var cmd = getCurrentCommand();
-        if (cmd == null) return false;
+        if (cmd == null) return 0;
 
-        cmd.run(Memory);
-        return true;
+        return cmd.run(Memory);
     }
 
     public bool reachedBreakpoint()

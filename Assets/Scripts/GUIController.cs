@@ -157,8 +157,8 @@ public class GUIController : MonoBehaviour
 
     public void stepIn()
     {
-        var success = simulation.step(); // Run command
-        if (success)
+        int cycles = simulation.step(); // Run command
+        if (cycles > 0)
         {
             // Update GUI
             getCodeLine(currentCommand).setRunning(false); // Update next command color to green
@@ -173,7 +173,7 @@ public class GUIController : MonoBehaviour
              * Sleep is used to slow down the GUI a bit, only for optics, not functional
              */
             Timer.setFrequency(frequencyIndex);
-            total_time += Timer.microseconds_per_step;
+            total_time += Timer.microseconds_per_step * cycles;
             GameObject.Find("Laufzeit").GetComponent<Text>().text = total_time.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
             //System.Threading.Thread.Sleep(100); //Sleep for 100ms
         }

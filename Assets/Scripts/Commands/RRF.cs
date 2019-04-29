@@ -24,7 +24,7 @@ namespace Commands
             return (opcode & 0b0011_1111_0000_0000) == 0b00_1100_0000_0000;
         }
 
-        public override void run(Memory memory)
+        public override int run(Memory memory)
         {
             Debug.Log("running RRF");
             int result = memory[address];
@@ -41,7 +41,7 @@ namespace Commands
                 memory.w_Register = (byte)result;
             }
 
-            base.run(memory); // Increase PC
+            return base.run(memory); // Increase PC
         }
     }
 }

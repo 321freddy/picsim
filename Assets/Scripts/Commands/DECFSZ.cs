@@ -24,16 +24,10 @@ namespace Commands
             return (opcode & 0b0011_1111_0000_0000) == 0b00_1011_0000_0000;
         }
 
-        public override void run(Memory memory)
+        public override int run(Memory memory)
         {
             Debug.Log("running DECFSZ");
             int result = memory[address] - 1;
-
-            // Skip if zero
-            if (((byte)result) == 0)
-            {
-                memory.ProgramCounter++;
-            }
 
             if (writeToMemory)
             {
@@ -44,7 +38,14 @@ namespace Commands
                 memory.w_Register = (byte)result;
             }
 
-            base.run(memory); // Increase PC
+            // Skip if zero
+            if (((byte)result) == 0)
+            {
+                memory.ProgramCounter += 2;
+                return 2;
+            }
+
+            return 1;
         }
     }
 }

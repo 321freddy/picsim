@@ -23,7 +23,7 @@ namespace Commands
             return (opcode & 0b0011_1111_0000_0000) == 0b00_0111_0000_0000;
         }
 
-        public override void run(Memory memory)
+        public override int run(Memory memory)
         {
             Debug.Log("running ADDWF");
             var variable = memory[address];
@@ -66,7 +66,7 @@ namespace Commands
                 memory.w_Register = (byte) result;
             }
 
-            base.run(memory); // Increase PC
+            return base.run(memory); // Increase PC
         }
     }
 }

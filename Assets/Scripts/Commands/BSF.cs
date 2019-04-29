@@ -24,11 +24,11 @@ namespace Commands
             return (opcode & 0b0011_1100_0000_0000) == 0b0001_0100_0000_0000;
         }
 
-        public override void run(Memory memory)
+        public override int run(Memory memory)
         {
             Debug.Log("running BSF");
             memory[address] = (byte)Bit.set(memory[address], bit);
-            base.run(memory); // Increase PC
+            return base.run(memory); // Increase PC
         }
     }
 }
