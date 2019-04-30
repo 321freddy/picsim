@@ -17,6 +17,7 @@ public class GUIController : MonoBehaviour
     public GameObject stepInButton;
     public GameObject stepOutButton;
     public GameObject resetButton;
+    public Slider speedSlider;
 
     private Simulation simulation;
     private Command currentCommand = null;
@@ -266,5 +267,10 @@ public class GUIController : MonoBehaviour
     {
         GameObject.Find("Laufzeit").GetComponent<Text>().text = Convert.ToString("0.00") + " µs";
         total_time = 0;
+    }
+
+    public void onSpeedChanged()
+    {
+        Time.timeScale = speedSlider.value;
     }
 }
