@@ -86,8 +86,6 @@ public abstract class Command
             {
                 memory.Prescaler = (byte) Bit.mask(memory.Prescaler, bit); 
             }
-
-            Debug.Log("taking bit " + bit + " --> " + addToTMR0 + "   (Prescaler: "+memory.Prescaler.ToString("X2")+"h)");
         }
 
         int result = memory.TMR0 + addToTMR0;
@@ -110,8 +108,7 @@ public abstract class Command
             updateTimer(memory);
         }
 
-
-        Debug.Log("reg 10h: " + memory[0x10].ToString("X2") + "h");
+        
         // Fire interrupt...
 
         return cycles;
