@@ -19,11 +19,10 @@ namespace Commands
             return (opcode & 0b0011_1111_1111_1111) == 0b0000_0000_0000_1000;
         }
 
-        public override int run(Memory memory)
+        protected override int updateProgramCounter(Memory memory)
         {
             Debug.Log("running RETURN");
             memory.ProgramCounter = memory.popStack();
-            base.run(memory);
             return 2;
         }
     }

@@ -21,12 +21,11 @@ namespace Commands
             return (opcode & 0b0011_1000_0000_0000) == 0b0010_0000_0000_0000;
         }
 
-        public override int run(Memory memory)
+        protected override int updateProgramCounter(Memory memory)
         {
             Debug.Log("running CALL");
             memory.pushStack((byte) (memory.ProgramCounter + 1));
             memory.ProgramCounter = literal;
-            base.run(memory);
             return 2;
         }
     }

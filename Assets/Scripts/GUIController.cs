@@ -85,6 +85,26 @@ public class GUIController : MonoBehaviour
         GameObject.Find("RP0 (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.RP0), 2);
         GameObject.Find("RP1 (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.RP1), 2);
         GameObject.Find("IRP (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.IRP), 2);
+
+        //Write Bits to GUI OPTION reg
+        GameObject.Find("RBPU (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.OPTION, Bit.RBPU), 2);
+        GameObject.Find("INTEDG (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.OPTION, Bit.INTEDG), 2);
+        GameObject.Find("T0CS (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.OPTION, Bit.T0CS), 2);
+        GameObject.Find("T0SE (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.OPTION, Bit.T0SE), 2);
+        GameObject.Find("PSA (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.OPTION, Bit.PSA), 2);
+        GameObject.Find("PS2 (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.OPTION, Bit.PS2), 2);
+        GameObject.Find("PS1 (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.OPTION, Bit.PS1), 2);
+        GameObject.Find("PS0 (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.OPTION, Bit.PS0), 2);
+        
+        //Write Bits to GUI INTCON reg
+        GameObject.Find("GIE (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.INTCON, Bit.GIE), 2);
+        GameObject.Find("EEIE (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.INTCON, Bit.EEIE), 2);
+        GameObject.Find("T0IE (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.INTCON, Bit.T0IE), 2);
+        GameObject.Find("INTE (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.INTCON, Bit.INTE), 2);
+        GameObject.Find("RBIE (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.INTCON, Bit.RBIE), 2);
+        GameObject.Find("T0IF (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.INTCON, Bit.T0IF), 2);
+        GameObject.Find("INTF (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.INTCON, Bit.INTF), 2);
+        GameObject.Find("RBIF (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.INTCON, Bit.RBIF), 2);
     }
 
     private void updateScroll()

@@ -20,11 +20,9 @@ namespace Commands
             return (opcode & 0b0011_1111_1111_1111) == 0b0000_0000_0110_0100;
         }
 
-        public override int run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running CLRWDT");
-            memory.ProgramCounter++;
-            return base.run(memory);
         }
     }
 }

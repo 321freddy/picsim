@@ -24,12 +24,10 @@ namespace Commands
             return (opcode & 0b0011_1100_0000_0000) == 0b0001_0100_0000_0000;
         }
 
-        public override int run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running BSF");
             memory[address] = (byte)Bit.set(memory[address], bit);
-            memory.ProgramCounter++;
-            return base.run(memory);
         }
     }
 }

@@ -59,6 +59,8 @@ public class Memory
     {
         get
         {
+            addr = (byte) Bit.mask(addr, 7); // 7 bit
+
             if (addr == 0x07 || addr > 0x4F) return 0; // Unimplemented memory locations
             if (addr == Address.INDF) return this[this[Address.FSR]]; // Indirect addressing
             if (addr == Address.PCLATH) return 0; // PCLATH is write only
@@ -77,6 +79,8 @@ public class Memory
         }
         set
         {
+            addr = (byte) Bit.mask(addr, 7); // 7 bit
+
             if (addr == 0x07 || addr > 0x4F) return; // Unimplemented memory locations
             if (addr == Address.INDF) this[this[Address.FSR]] = value; // Indirect addressing
 
@@ -92,7 +96,7 @@ public class Memory
             
             if (Bit.get(OPTION, Bit.PSA) == 0) // Prescaler assigned to Timer0
             {
-                if (addr == Address.TMR0) PS = 0; // Reset prescaler on TMR0 write
+                if (addr == Address.TMR0) Prescaler = 0; // Reset prescaler on TMR0 write
             }
 
             memory[addr] = value; // Write value
@@ -180,11 +184,11 @@ public class Memory
     
     public byte PS
     {
-        get => (byte) Bit.get(OPTION, Bit.PS0, 3);
-        set => memory[Address.OPTION] = (byte) (Bit.maskInverted(OPTION, 3) + Bit.mask(value, 3));
+        get => (byte) Bit.mask(OPTION, 3);
+        set => OPTION = (byte) (Bit.maskInverted(OPTION, 3) + Bit.mask(value, 3));
     }
 
-    public ushort Prescaler {get; set;}
+    public byte Prescaler {get; set;}
 
     public byte PORTA
     {
@@ -216,18 +220,18 @@ public static class Address
 {
     public const byte INDF = 0x00;
     public const byte TMR0 = 0x01;
-    public const byte OPTION = 0x01;
+    public const byte OPTION = 0x81;
     public const byte PCL = 0x02;
     public const byte STATUS = 0x03;
     public const byte FSR = 0x04;
     public const byte PORTA = 0x05;
     public const byte PORTB = 0x06;
-    public const byte TRISA = 0x05;
-    public const byte TRISB = 0x06;
+    public const byte TRISA = 0x85;
+    public const byte TRISB = 0x86;
     public const byte EEDATA = 0x08;
     public const byte EEADR = 0x09;
-    public const byte EECON1 = 0x08;
-    public const byte EECON2 = 0x09;
+    public const byte EECON1 = 0x88;
+    public const byte EECON2 = 0x89;
     public const byte PCLATH = 0x0A;
     public const byte INTCON = 0x0B;
 }

@@ -24,7 +24,7 @@ namespace Commands
             return (opcode & 0b0011_1111_0000_0000) == 0b00_1110_0000_0000;
         }
 
-        public override int run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running SWAPF");
             var variable = memory[address];
@@ -41,8 +41,6 @@ namespace Commands
                 memory.w_Register = (byte)result;
             }
 
-            memory.ProgramCounter++;
-            return base.run(memory);
         }
     }
 }

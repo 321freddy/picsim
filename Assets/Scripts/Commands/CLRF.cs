@@ -21,13 +21,11 @@ namespace Commands
             return (opcode & 0b0011_1111_1000_0000) == 0b00_0001_1000_0000;
         }
 
-        public override int run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running CLRF");
             memory[address] = 0;
             memory.ZeroFlag = 1;
-            memory.ProgramCounter++;
-            return base.run(memory);
         }
     }
 }

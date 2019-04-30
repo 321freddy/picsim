@@ -24,7 +24,7 @@ namespace Commands
             return (opcode & 0b0011_1111_0000_0000) == 0b00_0011_0000_0000;
         }
 
-        public override int run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running DECF");
             var result = memory[address] - 1;
@@ -48,8 +48,6 @@ namespace Commands
                 memory.w_Register = (byte)result;
             }
 
-            memory.ProgramCounter++;
-            return base.run(memory);
         }
     }
 }

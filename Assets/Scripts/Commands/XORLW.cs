@@ -21,7 +21,7 @@ namespace Commands
             return (opcode & 0b0011_1111_0000_0000) == 0b0011_1010_0000_0000;
         }
 
-        public override int run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running XORLW");
             memory.w_Register = (byte) (literal ^ memory.w_Register);
@@ -36,8 +36,6 @@ namespace Commands
                 memory.ZeroFlag = 0;
             }
 
-            memory.ProgramCounter++;
-            return base.run(memory);
         }
     }
 }

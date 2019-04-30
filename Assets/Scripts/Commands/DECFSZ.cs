@@ -24,7 +24,7 @@ namespace Commands
             return (opcode & 0b0011_1111_0000_0000) == 0b00_1011_0000_0000;
         }
 
-        public override int run(Memory memory)
+        protected override int updateProgramCounter(Memory memory)
         {
             Debug.Log("running DECFSZ");
             int result = memory[address] - 1;
@@ -42,11 +42,10 @@ namespace Commands
             if (((byte)result) == 0)
             {
                 memory.ProgramCounter += 2;
-                base.run(memory);
                 return 2;
             }
 
-            base.run(memory);
+            memory.ProgramCounter++;
             return 1;
         }
     }

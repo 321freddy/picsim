@@ -21,12 +21,10 @@ namespace Commands
             return (opcode & 0b0011_1111_1000_0000) == 0b1000_0000;
         }
 
-        public override int run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running MOVWF");
             memory[address] = memory.w_Register;
-            memory.ProgramCounter++;
-            return base.run(memory);
         }
     }
 }
