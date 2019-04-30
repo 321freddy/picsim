@@ -205,7 +205,7 @@ public class GUIController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (simulationRunning)
         {
