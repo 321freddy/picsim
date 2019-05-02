@@ -10,7 +10,7 @@ public class Memory
 {
     private byte wReg = 0;
     private ushort[] memory = new ushort[0x100];
-    private ushort[] stack = new ushort[8]; //Empfehlung von Herrn Lehmann, INT als Datentyp
+    private ushort[] stack = new ushort[8];
     private int stackPos = 0;
 
 
@@ -19,7 +19,7 @@ public class Memory
         Reset();
     }
 
-    public void Reset() 
+    public void Reset()
     {
         var oldMemory = memory;
         wReg = 0;
@@ -33,10 +33,10 @@ public class Memory
         memory[Address.PORTB] = oldMemory[Address.PORTB];
         memory[Address.EEDATA] = oldMemory[Address.EEDATA];
         memory[Address.EEADR] = oldMemory[Address.EEADR];
-        RBIF = (byte) Bit.get(oldMemory[Address.INTCON], Bit.RBIF);
-        ZeroFlag = (byte) Bit.get(oldMemory[Address.STATUS], Bit.Z);
-        Carry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.C);
-        DigitCarry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.DC);
+        RBIF = (byte)Bit.get(oldMemory[Address.INTCON], Bit.RBIF);
+        ZeroFlag = (byte)Bit.get(oldMemory[Address.STATUS], Bit.Z);
+        Carry = (byte)Bit.get(oldMemory[Address.STATUS], Bit.C);
+        DigitCarry = (byte)Bit.get(oldMemory[Address.STATUS], Bit.DC);
     }
 
     public void pushStack(ushort value)
@@ -66,10 +66,10 @@ public class Memory
                 addr != Address.INTCON &&
                 addr < 0x0C)
             {
-                addr = (byte) (addr + (Bank << 7)); // Include bank bit in address
+                addr = (byte)(addr + (Bank << 7)); // Include bank bit in address
             }
 
-            return (byte) memory[addr]; // Read value
+            return (byte)memory[addr]; // Read value
         }
         set
         {
@@ -83,7 +83,7 @@ public class Memory
                 addr != Address.INTCON &&
                 addr < 0x0C)
             {
-                addr = (byte) (addr + (Bank << 7)); // Include bank bit in address
+                addr = (byte)(addr + (Bank << 7)); // Include bank bit in address
             }
 
             memory[addr] = value; // Write value
@@ -91,6 +91,14 @@ public class Memory
     }
 
 
+        public byte getRaw(byte addr)
+        {
+            return (byte)memory[addr]; // Read value
+        }
+        public void setRaw(byte addr, byte value)
+        {
+            memory[addr] = (ushort) value; // Write value
+        }
 
     public byte w_Register
     {
@@ -99,93 +107,93 @@ public class Memory
         {
             wReg = value;
         }
-    }
+        }
 
-    public byte Status
+        public byte Status
     {
-        get => (byte) memory[Address.STATUS];
+        get => (byte)memory[Address.STATUS];
         set
         {
             memory[Address.STATUS] = value;
         }
-    }
+        }
 
-    public byte Bank
+        public byte Bank
     {
-        get => (byte) Bit.get(Status, Bit.RP0, 2);
-    }
+        get => (byte)Bit.get(Status, Bit.RP0, 2);
+        }
 
-    public ushort ProgramCounter // 13 bit
+        public ushort ProgramCounter // 13 bit
     {
         get => memory[Address.PCL];
         set
         {
-            memory[Address.PCL] = (ushort) Bit.mask(value, 13);
+            memory[Address.PCL] = (ushort)Bit.mask(value, 13);
         }
-    }
+        }
 
-    public byte PCL
+        public byte PCL
     {
-        get => (byte) memory[Address.PCL];
+        get => (byte)memory[Address.PCL];
         set
         {
             memory[Address.PCL] = value;
         }
-    }
+        }
 
-    public byte PCLATH
+        public byte PCLATH
     {
-        get => (byte) memory[Address.PCLATH];
+        get => (byte)memory[Address.PCLATH];
         set
         {
             memory[Address.PCLATH] = value;
         }
-    }
+        }
 
-    public byte ZeroFlag
+        public byte ZeroFlag
     {
-        get => (byte) Bit.get(Status, Bit.Z);
+        get => (byte)Bit.get(Status, Bit.Z);
         set
         {
-            Status = (byte) Bit.setTo(Status, Bit.Z, value);
+            Status = (byte)Bit.setTo(Status, Bit.Z, value);
         }
-    }
+        }
 
-    public byte Carry
+        public byte Carry
     {
-        get => (byte) Bit.get(Status, Bit.C);
+        get => (byte)Bit.get(Status, Bit.C);
         set
         {
-            Status = (byte) Bit.setTo(Status, Bit.C, value);
+            Status = (byte)Bit.setTo(Status, Bit.C, value);
         }
-    }
+        }
 
-    public byte DigitCarry
+        public byte DigitCarry
     {
-        get => (byte) Bit.get(Status, Bit.DC);
+        get => (byte)Bit.get(Status, Bit.DC);
         set
         {
-            Status = (byte) Bit.setTo(Status, Bit.DC, value);
+            Status = (byte)Bit.setTo(Status, Bit.DC, value);
         }
-    }
+        }
 
-    public byte INTCON
+        public byte INTCON
     {
-        get => (byte) memory[Address.INTCON];
+        get => (byte)memory[Address.INTCON];
         set
         {
             memory[Address.INTCON] = value;
         }
-    }
+        }
 
-    public byte RBIF
+        public byte RBIF
     {
-        get => (byte) Bit.get(INTCON, Bit.RBIF);
+        get => (byte)Bit.get(INTCON, Bit.RBIF);
         set
         {
-            Status = (byte) Bit.setTo(INTCON, Bit.RBIF, value);
+            Status = (byte)Bit.setTo(INTCON, Bit.RBIF, value);
         }
-    }
+        }
 
 }
 

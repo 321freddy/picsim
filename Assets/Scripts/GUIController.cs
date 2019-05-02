@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.EventSystems;
 
 public class GUIController : MonoBehaviour
 {
@@ -17,10 +18,17 @@ public class GUIController : MonoBehaviour
     public GameObject stepInButton;
     public GameObject stepOutButton;
     public GameObject resetButton;
+    public GameObject ramContainer;
+    public GameObject registerTemplate;
+    public GameObject registerRowTemplate;
+    public GameObject registerTextTemplate;
+    public GameObject[] pinsRA = new GameObject[8];
+    public GameObject[] pinsRB = new GameObject[8];
 
     private Simulation simulation;
     private Command currentCommand = null;
     private bool simulationRunning = false;
+    private bool fileSelected = false;
 
     public static int frequency_string;
     public double total_time = 0;
@@ -28,6 +36,13 @@ public class GUIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Initialize RA and RB with "0" 
+        for (int i = 0; i < 8; i++) 
+        {
+            pinsRA[i].GetComponent<Text>().text = "0";
+            pinsRB[i].GetComponent<Text>().text = "0";
+        }
+
         scrollRect = scrollRect ?? codeContainer.GetComponentInParent<ScrollRect>();
 
         Screen.SetResolution(1280, 720, false); 
@@ -37,6 +52,8 @@ public class GUIController : MonoBehaviour
         {
             fileDropdown.options.Add(new Dropdown.OptionData(file.Name));
         }
+
+
     }
 
     private void setSimulationRunning(bool running)
@@ -146,7 +163,11 @@ public class GUIController : MonoBehaviour
         stepInButton.GetComponent<Button>().interactable = true;
         stepOutButton.GetComponent<Button>().interactable = true;
         resetButton.GetComponent<Button>().interactable = true;
+        fileSelected = true;
         scrollRect.verticalNormalizedPosition = 1f;
+
+        //Refresh View
+        refreshRamView();
     }
 
     public void onFrequencySelected()
@@ -176,6 +197,9 @@ public class GUIController : MonoBehaviour
             total_time = total_time + Timer.microseconds_per_step;
             GameObject.Find("Laufzeit").GetComponent<Text>().text = total_time.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
             System.Threading.Thread.Sleep(100); //Sleep for 100ms
+
+            //Refresh View
+            refreshRamView();
         }
         else
         {
@@ -247,4 +271,169 @@ public class GUIController : MonoBehaviour
         GameObject.Find("Laufzeit").GetComponent<Text>().text = Convert.ToString("0.00") + " µs";
         total_time = 0;
     }
+
+    /* OutputChangedRA():
+     * If the bits of PORTRA are changed, this function is called.
+     * It calculates the new value and saves it to the register.
+     * For debugging reasons it generates an output.
+     * @registerValue: registerValue is calculated by adding every bit with its decimal value. Saved in RA-Register.
+     * @registerRA: Address of RA-Register.
+     * @fileselected: if TRUE, a file is selected and the register is initialized. Catch NULL Exception.
+     * @pinNumber: pinNumber is extracted from the name of the selected button.
+     * @pinsRA[8]: Holds buttons in GUI. Organized as an array. 8 Bits long.
+     * @simulation.Memory.setRaw: save value at given address.
+     * @simulation.Memory.getRaw: load value from given address.
+     * @RefreshRam(): Refresh Ram view after values in register have been changed.
+     */
+    public void OutputChangedRA()
+    {
+        int registerValue = 0;
+        byte registerRA = 0x05;
+
+        // File selected
+        if (fileSelected == true)
+        { 
+            // Extract pin number from selected button name [0,1,2,3,4,5,6,7]
+            var pinNumber = Convert.ToInt32(EventSystem.current.currentSelectedGameObject.name.Substring(3, 1)); 
+            // Check current pin value and change it. (0/1)?
+            if (pinsRA[pinNumber].GetComponent<Text>().text == "0")
+            {
+                pinsRA[pinNumber].GetComponent<Text>().text = "1";
+            }
+            else
+            {
+                pinsRA[pinNumber].GetComponent<Text>().text = "0";
+            }
+            // Read values of all pins and calculate the value of the whole byte (HEX)
+            for (int i = 0; i < pinsRA.Length; i++)
+            {
+                if (pinsRA[7 - i].GetComponent<Text>().text == "1")
+                {
+                    registerValue = (int)(registerValue + Math.Pow(2, (7 - i))); 
+                }
+            }
+            // Save claculated value at address 0x05 (RA)
+            simulation.Memory.setRaw(registerRA, (byte)registerValue);
+            // Print value of RA register (HEX)
+            Debug.Log("Inhalt RA-Register: " + simulation.Memory.getRaw(registerRA).ToString("X"));
+            //Refresh View
+            refreshRamView();
+        }
+        // No file selected
+        else
+        {
+            Debug.Log("No File Selected. Simulation not started yet.");
+        }
+    }
+
+    /* OutputChangedRB():
+     * If the bits of PORTRA are changed, this function is called.
+     * It calculates the new value and saves it to the register.
+     * For debugging reasons it generates an output.
+     * @registerValue: registerValue is calculated by adding every bit with its decimal value. Saved in RA-Register.
+     * @registerRB: Address of RA-Register.
+     * @fileselected: if TRUE, a file is selected and the register is initialized. Catch NULL Exception.
+     * @pinNumber: pinNumber is extracted from the name of the selected button.
+     * @pinsRB[8]: Holds buttons in GUI. Organized as an array. 8 Bits long.
+     * @simulation.Memory.setRaw: save value at given address.
+     * @simulation.Memory.getRaw: load value from given address.
+     * @RefreshRam(): Refresh Ram view after values in register have been changed.
+     */
+    public void OutputChangedRB()
+    {
+        int registerValue = 0;
+        byte registerRB = 0x06;
+
+        // File selected
+        if (fileSelected == true)
+        {
+            // Extract pin number from selected button name [0,1,2,3,4,5,6,7]
+            var pinNumber = Convert.ToInt32(EventSystem.current.currentSelectedGameObject.name.Substring(3, 1));
+            // Check current pin value and change it. (0/1)?
+            if (pinsRB[pinNumber].GetComponent<Text>().text == "0")
+            {
+                pinsRB[pinNumber].GetComponent<Text>().text = "1";
+            }
+            else
+            {
+                pinsRB[pinNumber].GetComponent<Text>().text = "0";
+            }
+            // Read values of all pins and calculate the value of the whole byte (HEX)
+            for (int i = 0; i < pinsRB.Length; i++)
+            {
+                if (pinsRB[7 - i].GetComponent<Text>().text == "1")
+                {
+                    registerValue = (int)(registerValue + Math.Pow(2, (7 - i)));
+                }
+            }
+            // Save claculated value at address 0x05 (RA)
+            simulation.Memory.setRaw(registerRB, (byte)registerValue);
+            // Print value of RA register (HEX)
+            Debug.Log("Inhalt RB-Register: " + simulation.Memory.getRaw(registerRB).ToString("X"));
+            //Refresh View
+            refreshRamView();
+        }
+        // No file selected
+        else
+        {
+            Debug.Log("No File Selected. Simulation not started yet.");
+        }
+
+    }
+   
+    /* refreshRamView():
+     * refreshs the RAM view if this function is called. Reads values form memory with the function getRaw(BYTE ADDRESS).
+     * Output for debugging reasons.
+     * @registerNumStr: Number of each register as a STRING value. Used for Naming each cloned Object right.
+     * @registerNumInt: Number of each register as an INT value. Used for addressing the right memory.
+     * @registerRow: Template which is cloned for each row in the register view.
+     * @registerBlock: Template which is cloned for each block in the register view. Eight blocks per registerRow.
+     * @text: Template which is cloned for each block in the register view. Shows register value after refreshing.
+     * 
+     */
+    public void refreshRamView()
+    {
+        string registerNumStr;
+        int registerNumInt;
+        // for-loop iterates 32 times, one time for each row in the RAM-View
+        for (int i = 0; i < 32; i++)
+        {
+            // Clone registerRow-Template
+            var registerRow = Instantiate(registerRowTemplate, ramContainer.transform);
+            // Renaing each clone 
+            registerRow.name = "Row " + (i * 8).ToString("X");
+            // for-loop iterates 8 time per row, cloning and renaming each generated registerBlock
+            for (int j = 0; j < 8; j++)
+            {
+                // Clone registerBlock-Template
+                var registerBlock = Instantiate(registerTemplate, registerRow.transform);
+                // Formating the generated HEX-Values
+                // @if: numbers from 0x00-0x0F
+                // @else: numbers from 0x10-0xFF
+                if(i*8+j < 16)
+                {
+                    // Name
+                    registerNumStr = "0" + (i * 8 + j).ToString("X");
+                    // Value
+                    registerNumInt = i * 8 + j;
+                }
+                else
+                {
+                    // Name
+                    registerNumStr = (i * 8 + j).ToString("X");
+                    // Value
+                    registerNumInt = i * 8 + j;
+                }
+                // Rename each block with the above calculated name
+                registerBlock.name = "Block: " + registerNumStr;
+                // Clone text-template
+                var text = Instantiate(registerTextTemplate, registerBlock.transform);
+                // Rename eacht text-element with the same name as the block above
+                text.name = "Register: " + registerNumStr;
+                // Read memory and write the right value to the text-element
+                GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte) registerNumInt)).ToString("X2");
+            }
+        }
+    }
 }
+
