@@ -41,6 +41,8 @@ public class Memory
         ZeroFlag = (byte) Bit.get(oldMemory[Address.STATUS], Bit.Z);
         Carry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.C);
         DigitCarry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.DC);
+
+        lastValueOfPortA = (byte) memory[Address.PORTA];
     }
 
     public void pushStack(ushort value)
@@ -193,7 +195,10 @@ public class Memory
     public byte PORTA
     {
         get => (byte) memory[Address.PORTA];
-        set => memory[Address.PORTA] = value;
+        set{
+            lastValueOfPortA = (byte) memory[Address.PORTA];
+            memory[Address.PORTA] = value;
+        }
     }
 
     public byte PORTB
@@ -212,6 +217,25 @@ public class Memory
     {
         get => (byte) memory[Address.TRISB];
         set => memory[Address.TRISB] = value;
+    }
+
+    private byte lastValueOfPortA;
+    public bool runT0CKIEdgeDetection() // Returns true if selected edge is detected (only once for every edge)
+    {
+        var now = Bit.get(PORTA, Bit.RA4);
+        var last = Bit.get(lastValueOfPortA, Bit.RA4);
+        lastValueOfPortA = PORTA;
+
+        if (now == last) return false;
+
+        if (Bit.get(OPTION, Bit.T0SE) == 0) // rising edge 0->1
+        {
+            return last < now;
+        }
+        else // falling edge 1->0
+        {
+            return last > now;
+        }
     }
 
 }

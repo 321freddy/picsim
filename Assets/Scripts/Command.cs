@@ -61,17 +61,9 @@ public abstract class Command
         {
             addToTMR0 = fosc4; // add Fosc/4 to TMR0
         }
-        else
+        else if (memory.runT0CKIEdgeDetection())
         {
-            // RA4 / T0CKI
-            if (Bit.get(memory.OPTION, Bit.T0SE) == 0) // rising edge 0->1
-            {
-
-            }
-            else // falling edge 1->0
-            {
-
-            }
+            addToTMR0 = 1; // RA4 / T0CKI edge
         }
 
         if (Bit.get(memory.OPTION, Bit.PSA) == 0) // with prescaler?
