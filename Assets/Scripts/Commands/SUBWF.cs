@@ -24,7 +24,7 @@ namespace Commands
             return (opcode & 0b0011_1111_0000_0000) == 0b00_0010_0000_0000;
         }
 
-        public override void run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running SUBWF");
             int result = memory[address] - memory.w_Register;
@@ -66,7 +66,6 @@ namespace Commands
                 memory.w_Register = (byte)result;
             }
 
-            base.run(memory); // Increase PC
         }
     }
 }

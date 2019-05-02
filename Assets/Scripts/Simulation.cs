@@ -44,25 +44,10 @@ class Simulation
         return null;
     }
 
-    public bool step() // Runs one command and increases PC. Returns false if program ended.
-    {
-        var cmd = getCurrentCommand();
-        if (cmd == null) return false;
+    // Runs one command and increases PC. Returns amount of cycles executed. (0 if program ended)
+    public int step() => getCurrentCommand()?.run(Memory) ?? 0;
 
-        cmd.run(Memory);
-        return true;
-    }
+    public bool reachedBreakpoint() => getCurrentCommand()?.breakpoint ?? false;
 
-    public bool reachedBreakpoint()
-    {
-        var cmd = getCurrentCommand();
-        if (cmd == null) return false;
-
-        return cmd.breakpoint;
-    }
-
-    public void Reset()
-    {
-        Memory.Reset();
-    }
+    public void Reset() => Memory.Reset();
 }

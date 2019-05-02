@@ -26,7 +26,11 @@ public class Memory
         memory = new ushort[0x100];
         stack = new ushort[8];
         stackPos = 0;
+        Prescaler = 0;
+        OPTION = 0xFF;
+        
 
+        // Unchanged Registers
         memory[Address.TMR0] = oldMemory[Address.TMR0];
         memory[Address.FSR] = oldMemory[Address.FSR];
         memory[Address.PORTA] = oldMemory[Address.PORTA];
@@ -55,6 +59,8 @@ public class Memory
     {
         get
         {
+            addr = (byte) Bit.mask(addr, 7); // 7 bit
+
             if (addr == 0x07 || addr > 0x4F) return 0; // Unimplemented memory locations
             if (addr == Address.INDF) return this[this[Address.FSR]]; // Indirect addressing
             if (addr == Address.PCLATH) return 0; // PCLATH is write only
@@ -73,6 +79,8 @@ public class Memory
         }
         set
         {
+            addr = (byte) Bit.mask(addr, 7); // 7 bit
+
             if (addr == 0x07 || addr > 0x4F) return; // Unimplemented memory locations
             if (addr == Address.INDF) this[this[Address.FSR]] = value; // Indirect addressing
 
@@ -84,6 +92,11 @@ public class Memory
                 addr < 0x0C)
             {
                 addr = (byte)(addr + (Bank << 7)); // Include bank bit in address
+            }
+            
+            if (Bit.get(OPTION, Bit.PSA) == 0) // Prescaler assigned to Timer0
+            {
+                if (addr == Address.TMR0) Prescaler = 0; // Reset prescaler on TMR0 write
             }
 
             memory[addr] = value; // Write value
@@ -103,21 +116,14 @@ public class Memory
     public byte w_Register
     {
         get => wReg;
-        set
-        {
-            wReg = value;
-        }
-        }
 
-        public byte Status
+        set => wReg = value;
+    }
+    public byte Status
     {
-        get => (byte)memory[Address.STATUS];
-        set
-        {
-            memory[Address.STATUS] = value;
-        }
-        }
-
+        get => (byte) memory[Address.STATUS];
+        set => memory[Address.STATUS] = value;
+    }
         public byte Bank
     {
         get => (byte)Bit.get(Status, Bit.RP0, 2);
@@ -126,93 +132,118 @@ public class Memory
         public ushort ProgramCounter // 13 bit
     {
         get => memory[Address.PCL];
-        set
-        {
-            memory[Address.PCL] = (ushort)Bit.mask(value, 13);
-        }
-        }
+
+        set => memory[Address.PCL] = (ushort) Bit.mask(value, 13);
+    }
+
 
         public byte PCL
     {
-        get => (byte)memory[Address.PCL];
-        set
-        {
-            memory[Address.PCL] = value;
-        }
-        }
+
+        get => (byte) memory[Address.PCL];
+        set => memory[Address.PCL] = value;
+    }
+
 
         public byte PCLATH
     {
-        get => (byte)memory[Address.PCLATH];
-        set
-        {
-            memory[Address.PCLATH] = value;
-        }
-        }
+
+        get => (byte) memory[Address.PCLATH];
+        set => memory[Address.PCLATH] = value;
+    }
+
 
         public byte ZeroFlag
     {
-        get => (byte)Bit.get(Status, Bit.Z);
-        set
-        {
-            Status = (byte)Bit.setTo(Status, Bit.Z, value);
-        }
-        }
+        get => (byte) Bit.get(Status, Bit.Z);
+        set => Status = (byte) Bit.setTo(Status, Bit.Z, value);
+    }
 
         public byte Carry
     {
-        get => (byte)Bit.get(Status, Bit.C);
-        set
-        {
-            Status = (byte)Bit.setTo(Status, Bit.C, value);
-        }
-        }
+        get => (byte) Bit.get(Status, Bit.C);
+        set => Status = (byte) Bit.setTo(Status, Bit.C, value);
+    }
 
         public byte DigitCarry
     {
-        get => (byte)Bit.get(Status, Bit.DC);
-        set
-        {
-            Status = (byte)Bit.setTo(Status, Bit.DC, value);
-        }
-        }
+        get => (byte) Bit.get(Status, Bit.DC);
+        set => Status = (byte) Bit.setTo(Status, Bit.DC, value);
+    }
 
         public byte INTCON
     {
-        get => (byte)memory[Address.INTCON];
-        set
-        {
-            memory[Address.INTCON] = value;
-        }
-        }
-
-        public byte RBIF
+        get => (byte) memory[Address.INTCON];
+        set => memory[Address.INTCON] = value;
+    }
+    
+    public byte RBIF
     {
-        get => (byte)Bit.get(INTCON, Bit.RBIF);
-        set
-        {
-            Status = (byte)Bit.setTo(INTCON, Bit.RBIF, value);
-        }
-        }
+        get => (byte) Bit.get(INTCON, Bit.RBIF);
+        set => Status = (byte) Bit.setTo(INTCON, Bit.RBIF, value);
+    }
+    
+    public byte TMR0
+    {
+        get => (byte) memory[Address.TMR0];
+        set => memory[Address.TMR0] = value;
+    }
+    
+    public byte OPTION
+    {
+        get => (byte) memory[Address.OPTION];
+        set => memory[Address.OPTION] = value;
+    }
+    
+    public byte PS
+    {
+        get => (byte) Bit.mask(OPTION, 3);
+        set => OPTION = (byte) (Bit.maskInverted(OPTION, 3) + Bit.mask(value, 3));
+    }
 
+    public byte Prescaler {get; set;}
+
+    public byte PORTA
+    {
+        get => (byte) memory[Address.PORTA];
+        set => memory[Address.PORTA] = value;
+    }
+
+    public byte PORTB
+    {
+        get => (byte) memory[Address.PORTB];
+        set => memory[Address.PORTB] = value;
+    }
+
+    public byte TRISA
+    {
+        get => (byte) memory[Address.TRISA];
+        set => memory[Address.TRISA] = value;
+    }
+
+    public byte TRISB
+    {
+        get => (byte) memory[Address.TRISB];
+        set => memory[Address.TRISB] = value;
+    }
 }
 
 public static class Address
 {
     public const byte INDF = 0x00;
     public const byte TMR0 = 0x01;
-    public const byte OPTION = 0x01;
+    public const byte OPTION = 0x81;
     public const byte PCL = 0x02;
     public const byte STATUS = 0x03;
     public const byte FSR = 0x04;
     public const byte PORTA = 0x05;
     public const byte PORTB = 0x06;
-    public const byte TRISA = 0x05;
-    public const byte TRISB = 0x06;
+    public const byte TRISA = 0x85;
+    public const byte TRISB = 0x86;
     public const byte EEDATA = 0x08;
     public const byte EEADR = 0x09;
-    public const byte EECON1 = 0x08;
-    public const byte EECON2 = 0x09;
+    public const byte EECON1 = 0x88;
+    public const byte EECON2 = 0x89;
     public const byte PCLATH = 0x0A;
     public const byte INTCON = 0x0B;
 }

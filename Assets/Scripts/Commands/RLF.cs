@@ -24,7 +24,7 @@ namespace Commands
             return (opcode & 0b0011_1111_0000_0000) == 0b00_1101_0000_0000;
         }
 
-        public override void run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running RLF");
             int result = memory[address] << 1;
@@ -40,7 +40,6 @@ namespace Commands
                 memory.w_Register = (byte)result;
             }
 
-            base.run(memory); // Increase PC
         }
     }
 }

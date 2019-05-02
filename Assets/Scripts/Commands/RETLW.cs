@@ -21,11 +21,12 @@ namespace Commands
             return (opcode & 0b0011_1100_0000_0000) == 0b0011_0100_0000_0000;
         }
 
-        public override void run(Memory memory)
+        protected override int updateProgramCounter(Memory memory)
         {
             Debug.Log("running RETLW");
             memory.w_Register = literal;
             memory.ProgramCounter = memory.popStack();
+            return 2;
         }
     }
 }

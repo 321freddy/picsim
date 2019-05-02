@@ -21,7 +21,7 @@ namespace Commands
             return (opcode & 0b0011_1110_0000_0000) == 0b0011_1110_0000_0000;
         }
 
-        public override void run(Memory memory)
+        protected override void runCommand(Memory memory)
         {
             Debug.Log("running ADDLW");
             int result = literal + memory.w_Register;
@@ -55,7 +55,6 @@ namespace Commands
             }
 
             memory.w_Register = (byte) result;
-            base.run(memory); // Increase PC
         }
     }
 }
