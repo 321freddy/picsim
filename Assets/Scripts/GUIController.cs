@@ -167,7 +167,7 @@ public class GUIController : MonoBehaviour
         scrollRect.verticalNormalizedPosition = 1f;
 
         //Refresh View
-        refreshRamView();
+        loadRamView();
     }
 
     public void onFrequencySelected()
@@ -391,7 +391,7 @@ public class GUIController : MonoBehaviour
      * @text: Template which is cloned for each block in the register view. Shows register value after refreshing.
      * 
      */
-    public void refreshRamView()
+    public void loadRamView()
     {
         string registerNumStr;
         int registerNumInt;
@@ -433,6 +433,30 @@ public class GUIController : MonoBehaviour
                 // Read memory and write the right value to the text-element
                 GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte) registerNumInt)).ToString("X2");
             }
+        }
+    }
+
+    public void refreshRamView()
+    {
+        int registerNumInt;
+        string registerNumStr;
+        for (int i = 0; i < 256; i++)
+        {
+            // Value
+            registerNumInt = i;
+            if(i < 16)
+            {
+                // Name
+                registerNumStr = "0" + registerNumInt.ToString("X");
+            }
+            else
+            {
+                // Name
+                registerNumStr = registerNumInt.ToString("X");
+            }
+
+            // Read memory and write the right value to the text-element
+            GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte)registerNumInt)).ToString("X2");
         }
     }
 }
