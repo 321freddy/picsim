@@ -463,25 +463,34 @@ public class GUIController : MonoBehaviour
 
     public void refreshRamView()
     {
-        int registerNumInt;
-        string registerNumStr;
-        for (int i = 0; i < 256; i++)
-        {
-            // Value
-            registerNumInt = i;
-            if (i < 16)
-            {
-                // Name
-                registerNumStr = "0" + registerNumInt.ToString("X");
-            }
-            else
-            {
-                // Name
-                registerNumStr = registerNumInt.ToString("X");
-            }
+        // int registerNumInt;
+        // string registerNumStr;
 
-            // Read memory and write the right value to the text-element
-            GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte)registerNumInt)).ToString("X2");
+        for (int y = 0; y < ramContainer.transform.childCount; y++)
+        {
+            var row = ramContainer.transform.GetChild(y);
+            for (int x = 0; x < row.childCount; x++)
+            {
+                // // Value
+                // registerNumInt = i;
+                // if (i < 16)
+                // {
+                //     // Name
+                //     registerNumStr = "0" + registerNumInt.ToString("X");
+                // }
+                // else
+                // {
+                //     // Name
+                //     registerNumStr = registerNumInt.ToString("X");
+                // }
+
+                // // Read memory and write the right value to the text-element
+                // GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte)registerNumInt)).ToString("X2");
+
+
+                var block = row.GetChild(x);
+                block.GetComponentInChildren<Text>().text = simulation.Memory.getRaw((byte) (y * 8 + x)).ToString("X2");
+            }
         }
     }
     public void onSpeedChanged()
