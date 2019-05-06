@@ -129,15 +129,15 @@ RectTransform:
   m_GameObject: {fileID: 5216274631064660833}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_Children: []
   m_Father: {fileID: 9123752305013872100}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 10, y: -6}
-  m_SizeDelta: {x: 0, y: 12}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 10, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &204357446214259611
 CanvasRenderer:
@@ -160,7 +160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.87058824, g: 0.40784314, b: 0.40784314, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -327,9 +327,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   COLOR_DEFAULT: {r: 1, g: 1, b: 1, a: 0.7764706}
-  COLOR_RUNNING: {r: 0, g: 1, b: 0, a: 0.49803922}
-  COLOR_BP_ACTIVE: {r: 1, g: 0, b: 0, a: 1}
-  COLOR_BP_INACTIVE: {r: 1, g: 0, b: 0, a: 0}
+  COLOR_RUNNING: {r: 0.60784316, g: 0.72156864, b: 0.6431373, a: 0.49803922}
+  COLOR_BP_ACTIVE: {r: 0.87058824, g: 0.40784314, b: 0.40784314, a: 1}
+  COLOR_BP_INACTIVE: {r: 0.87058824, g: 0.40784314, b: 0.40784314, a: 0}
 --- !u!114 &7120166963549691656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,7 +343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5092195, g: 1, b: 0.48584908, a: 1}
+  m_Color: {r: 0.60784316, g: 0.72156864, b: 0.6431373, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

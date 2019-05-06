@@ -115,6 +115,10 @@ public class Memory
         {
             memory[addr] = (ushort) value; // Write value
         }
+        public byte getStack(int index)
+        {
+            return (byte)stack[index];
+        }
 
     public byte w_Register
     {
