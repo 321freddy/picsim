@@ -79,7 +79,17 @@ public class GUIController : MonoBehaviour
         GameObject.Find("ProgCounter").GetComponent<Text>().text = simulation.Memory.ProgramCounter.ToString("X2");
         GameObject.Find("Value_PCL").GetComponent<Text>().text = (simulation.Memory.getRaw((byte) 0x02)).ToString("X2");
         GameObject.Find("Value_FSR").GetComponent<Text>().text = (simulation.Memory.getRaw((byte)0x04)).ToString("X2");
+        GameObject.Find("Value_PCLATH").GetComponent<Text>().text = (simulation.Memory.getRaw((byte)0x0A)).ToString("X2");
 
+        //Stack
+        GameObject.Find("Stack00").GetComponent<Text>().text = (simulation.Memory.getStack(0)).ToString("X2");
+        GameObject.Find("Stack01").GetComponent<Text>().text = (simulation.Memory.getStack(1)).ToString("X2");
+        GameObject.Find("Stack02").GetComponent<Text>().text = (simulation.Memory.getStack(2)).ToString("X2");
+        GameObject.Find("Stack03").GetComponent<Text>().text = (simulation.Memory.getStack(3)).ToString("X2");
+        GameObject.Find("Stack04").GetComponent<Text>().text = (simulation.Memory.getStack(4)).ToString("X2");
+        GameObject.Find("Stack05").GetComponent<Text>().text = (simulation.Memory.getStack(5)).ToString("X2");
+        GameObject.Find("Stack06").GetComponent<Text>().text = (simulation.Memory.getStack(6)).ToString("X2");
+        GameObject.Find("Stack07").GetComponent<Text>().text = (simulation.Memory.getStack(7)).ToString("X2");
 
         //Write Bits to GUI StatusReg
         GameObject.Find("C (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.C), 2);
@@ -428,6 +438,11 @@ public class GUIController : MonoBehaviour
         }
     }
 
+    /* refreshRamView:
+     * refresh every text box which was genereatet/cloned before
+     * does not create any new object
+     * can only be used, after RamView was initialized 
+     */
     public void refreshRamView()
     {
         // int registerNumInt;
