@@ -13,6 +13,9 @@ public class Memory
     private ushort[] stack = new ushort[8];
     private int stackPos = 0;
 
+    private byte lastValueOfPortA;
+    private byte lastValueOfPortB;
+
 
     public Memory()
     {
@@ -44,6 +47,7 @@ public class Memory
         DigitCarry             = (byte) Bit.get(oldMemory[Address.STATUS], Bit.DC);
 
         lastValueOfPortA       = (byte) memory[Address.PORTA];
+        lastValueOfPortB       = (byte) memory[Address.PORTA];
     }
 
     public void pushStack(ushort value)
@@ -213,7 +217,7 @@ public class Memory
     public byte PORTA
     {
         get => (byte) memory[Address.PORTA];
-        set{
+        set {
             lastValueOfPortA = (byte) memory[Address.PORTA];
             memory[Address.PORTA] = value;
         }
@@ -222,7 +226,10 @@ public class Memory
     public byte PORTB
     {
         get => (byte) memory[Address.PORTB];
-        set => memory[Address.PORTB] = value;
+        set {
+            lastValueOfPortB = (byte) memory[Address.PORTB];
+            memory[Address.PORTB] = value;
+        }
     }
 
     public byte TRISA
@@ -236,7 +243,7 @@ public class Memory
         get => (byte) memory[Address.TRISB];
         set => memory[Address.TRISB] = value;
     }
-    private byte lastValueOfPortA;
+    
     public bool runT0CKIEdgeDetection() // Returns true if selected edge is detected (only once for every edge)
     {
         var now = Bit.get(PORTA, Bit.RA4);
@@ -253,6 +260,39 @@ public class Memory
         {
             return last > now;
         }
+    }
+    
+    public void runRBEdgeDetection() // Returns true if selected edge is detected (only once for every edge)
+    {
+        // RB0/INT
+        var now = Bit.get(PORTB, Bit.INT);
+        var last = Bit.get(lastValueOfPortB, Bit.INT);
+        bool intEdge = false;
+
+        if (Bit.get(OPTION, Bit.INTEDG) == 1) // rising edge 0->1
+        {
+            intEdge = last < now;
+        }
+        else // falling edge 1->0
+        {
+            intEdge = last > now;
+        }
+
+        if (intEdge)
+        {
+            INTCON = (byte) Bit.set(INTCON, Bit.INTF);
+            // TODO:
+            // Return from sleep if INTCON.INTE is set
+            // But only jump ISR if GIE is set
+        }
+
+        // RB:4-7 changed?
+        if (Bit.get(PORTB, 4, 4) != Bit.get(lastValueOfPortB, 4, 4))
+        {
+            INTCON = (byte) Bit.set(INTCON, Bit.RBIF);
+        }
+
+        lastValueOfPortB = PORTB;
     }
 }
 

@@ -23,6 +23,8 @@ namespace Commands
         protected override int updateProgramCounter(Memory memory)
         {
             Debug.Log("running RETFIE");
+            memory.ProgramCounter = memory.popStack();
+            memory.INTCON = (byte) Bit.set(memory.INTCON, Bit.GIE);
             return 2;
         }
     }

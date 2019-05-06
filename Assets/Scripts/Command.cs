@@ -80,13 +80,49 @@ public abstract class Command
             }
         }
 
-        int result = memory.TMR0 + addToTMR0;
+        int result = (int) memory.TMR0 + addToTMR0;
         if (result > 0xFF)
         {
-            Bit.set(memory.INTCON, Bit.T0IF);
+            memory.INTCON = (byte) Bit.set(memory.INTCON, Bit.T0IF);
         }
 
         memory.TMR0 = (byte) result;
+    }
+
+    protected virtual void checkForInterrupt(Memory memory)
+    {
+        memory.runRBEdgeDetection();
+
+        if (Bit.get(memory.INTCON, Bit.GIE) == 1) // global interrupt enabled?
+        {
+            if (Bit.get(memory.INTCON, Bit.T0IE) == 1 && // T0 interrupt
+                Bit.get(memory.INTCON, Bit.T0IF) == 1) 
+            {
+                Debug.Log("INTERRUPT Timer0 overflow");
+                fireInterrupt(memory);
+            }
+            else 
+            if (Bit.get(memory.INTCON, Bit.INTE) == 1 && // RB0/INT interrupt
+                Bit.get(memory.INTCON, Bit.INTF) == 1) 
+            {
+                Debug.Log("INTERRUPT RB0/INT");
+                fireInterrupt(memory);
+            }
+            else 
+            if (Bit.get(memory.INTCON, Bit.RBIE) == 1 && // RB interrupt
+                Bit.get(memory.INTCON, Bit.RBIF) == 1) 
+            {
+                Debug.Log("INTERRUPT RB");
+                fireInterrupt(memory);
+            }
+        }
+    }
+    
+    protected virtual void fireInterrupt(Memory memory)
+    {
+        memory.pushStack((byte) (memory.ProgramCounter + 1));
+        memory.ProgramCounter = 4;
+        memory.INTCON = (byte) Bit.clear(memory.INTCON, Bit.GIE);
     }
 
     public virtual int run(Memory memory)
@@ -98,10 +134,8 @@ public abstract class Command
         for (int i = 0; i < cycles; i++)
         {
             updateTimer(memory);
+            checkForInterrupt(memory);
         }
-
-        
-        // Fire interrupt...
 
         return cycles;
     }
