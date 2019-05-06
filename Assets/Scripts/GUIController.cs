@@ -277,9 +277,9 @@ public class GUIController : MonoBehaviour
         getCodeLine(currentCommand).setRunning(true); // Mark first command
         updateScroll();
         TimerReset();
-        refreshRamView();
         OutputChangedRA();
         OutputChangedRB();
+        refreshRamView();
         updateRegisterDisplay();
     }
     public void onHelpClicked()
@@ -308,7 +308,6 @@ public class GUIController : MonoBehaviour
     public void OutputChangedRA()
     {
         int registerValue = 0;
-        byte registerRA = 0x05;
 
         // File selected
         if (fileSelected == true)
@@ -333,10 +332,10 @@ public class GUIController : MonoBehaviour
                 }
             }
             // Save claculated value at address 0x05 (RA)
-            simulation.Memory.setRaw(registerRA, (byte)registerValue);
+            simulation.Memory.PORTA = (byte)registerValue;
             
             // Print value of RA register (HEX)
-            Debug.Log("Inhalt RA-Register: " + simulation.Memory.getRaw(registerRA).ToString("X"));
+            Debug.Log("Inhalt RA-Register: " + simulation.Memory.PORTA.ToString("X"));
             //Refresh View
             refreshRamView();
         }
@@ -363,7 +362,6 @@ public class GUIController : MonoBehaviour
     public void OutputChangedRB()
     {
         int registerValue = 0;
-        byte registerRB = 0x06;
 
         // File selected
         if (fileSelected == true)
@@ -388,9 +386,10 @@ public class GUIController : MonoBehaviour
                 }
             }
             // Save claculated value at address 0x05 (RA)
-            simulation.Memory.setRaw(registerRB, (byte)registerValue);
+            simulation.Memory.PORTB = (byte)registerValue;
+
             // Print value of RA register (HEX)
-            Debug.Log("Inhalt RB-Register: " + simulation.Memory.getRaw(registerRB).ToString("X"));
+            Debug.Log("Inhalt RB-Register: " + simulation.Memory.PORTB.ToString("X"));
             //Refresh View
             refreshRamView();
         }
@@ -462,10 +461,10 @@ public class GUIController : MonoBehaviour
         // int registerNumInt;
         // string registerNumStr;
 
-        for (int y = 0; y < ramContainer.transform.childCount; y++)
+        for (int y = 0; y < 32; y++)
         {
             var row = ramContainer.transform.GetChild(y);
-            for (int x = 0; x < row.childCount; x++)
+            for (int x = 0; x < 8; x++)
             {
                 // // Value
                 // registerNumInt = i;
