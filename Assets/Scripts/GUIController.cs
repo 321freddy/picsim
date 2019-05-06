@@ -23,8 +23,6 @@ public class GUIController : MonoBehaviour
     public GameObject registerTemplate;
     public GameObject registerRowTemplate;
     public GameObject registerTextTemplate;
-    public GameObject[] pinsRA = new GameObject[8];
-    public GameObject[] pinsRB = new GameObject[8];
 
     public Slider speedSlider;
 
@@ -39,13 +37,6 @@ public class GUIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Initialize RA and RB with "0" 
-        for (int i = 0; i < 8; i++) 
-        {
-            pinsRA[i].GetComponent<Text>().text = "0";
-            pinsRB[i].GetComponent<Text>().text = "0";
-        }
-
         scrollRect = scrollRect ?? codeContainer.GetComponentInParent<ScrollRect>();
 
         Screen.SetResolution(1280, 720, false); 
@@ -307,42 +298,33 @@ public class GUIController : MonoBehaviour
      */
     public void OutputChangedRA()
     {
-        int registerValue = 0;
-
         // File selected
         if (fileSelected == true)
         { 
             // Extract pin number from selected button name [0,1,2,3,4,5,6,7]
-            var pinNumber = Convert.ToInt32(EventSystem.current.currentSelectedGameObject.name.Substring(3, 1)); 
+            var selected = EventSystem.current.currentSelectedGameObject.transform;
+            if (selected.parent.name != "Pins") return;
+            var selectedObject = selected.gameObject;
+
             // Check current pin value and change it. (0/1)?
-            if (pinsRA[pinNumber].GetComponent<Text>().text == "0")
-            {
-                pinsRA[pinNumber].GetComponent<Text>().text = "1";
-            }
-            else
-            {
-                pinsRA[pinNumber].GetComponent<Text>().text = "0";
-            }
+            int pin = int.Parse(selectedObject.GetComponent<Text>().text);
+            selectedObject.GetComponent<Text>().text = (1 - pin).ToString();
+
             // Read values of all pins and calculate the value of the whole byte (HEX)
-            for (int i = 0; i < pinsRA.Length; i++)
+            int registerValue = 0;
+            for (int i = 0; i < 8; i++)
             {
-                if (pinsRA[7 - i].GetComponent<Text>().text == "1")
-                {
-                    registerValue = (int)(registerValue + Math.Pow(2, (7 - i))); 
-                }
+                var isset = int.Parse(selected.parent.GetChild(i).GetComponent<Text>().text);
+                registerValue = Bit.setTo(registerValue, 7 - i, isset);
             }
-            // Save claculated value at address 0x05 (RA)
+            // Save claculated value
             simulation.Memory.PORTA = (byte)registerValue;
             
             // Print value of RA register (HEX)
             Debug.Log("Inhalt RA-Register: " + simulation.Memory.PORTA.ToString("X"));
+
             //Refresh View
             refreshRamView();
-        }
-        // No file selected
-        else
-        {
-            Debug.Log("No File Selected. Simulation not started yet.");
         }
     }
 
@@ -361,44 +343,34 @@ public class GUIController : MonoBehaviour
      */
     public void OutputChangedRB()
     {
-        int registerValue = 0;
-
         // File selected
         if (fileSelected == true)
-        {
+        { 
             // Extract pin number from selected button name [0,1,2,3,4,5,6,7]
-            var pinNumber = Convert.ToInt32(EventSystem.current.currentSelectedGameObject.name.Substring(3, 1));
-            // Check current pin value and change it. (0/1)?
-            if (pinsRB[pinNumber].GetComponent<Text>().text == "0")
-            {
-                pinsRB[pinNumber].GetComponent<Text>().text = "1";
-            }
-            else
-            {
-                pinsRB[pinNumber].GetComponent<Text>().text = "0";
-            }
-            // Read values of all pins and calculate the value of the whole byte (HEX)
-            for (int i = 0; i < pinsRB.Length; i++)
-            {
-                if (pinsRB[7 - i].GetComponent<Text>().text == "1")
-                {
-                    registerValue = (int)(registerValue + Math.Pow(2, (7 - i)));
-                }
-            }
-            // Save claculated value at address 0x05 (RA)
-            simulation.Memory.PORTB = (byte)registerValue;
+            var selected = EventSystem.current.currentSelectedGameObject.transform;
+            if (selected.parent.name != "Pins") return;
+            var selectedObject = selected.gameObject;
 
-            // Print value of RA register (HEX)
+            // Check current pin value and change it. (0/1)?
+            int pin = int.Parse(selectedObject.GetComponent<Text>().text);
+            selectedObject.GetComponent<Text>().text = (1 - pin).ToString();
+
+            // Read values of all pins and calculate the value of the whole byte (HEX)
+            int registerValue = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                var isset = int.Parse(selected.parent.GetChild(i).GetComponent<Text>().text);
+                registerValue = Bit.setTo(registerValue, 7 - i, isset);
+            }
+            // Save claculated value
+            simulation.Memory.PORTB = (byte)registerValue;
+            
+            // Print value of RB register (HEX)
             Debug.Log("Inhalt RB-Register: " + simulation.Memory.PORTB.ToString("X"));
+            
             //Refresh View
             refreshRamView();
         }
-        // No file selected
-        else
-        {
-            Debug.Log("No File Selected. Simulation not started yet.");
-        }
-
     }
    
     /* refreshRamView():
