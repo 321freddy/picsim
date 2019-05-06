@@ -295,6 +295,7 @@ public class GUIController : MonoBehaviour
     public void onHelpClicked()
     {
         System.Diagnostics.Process.Start("Help.jpg");
+        //Application.OpenURL("http://lmgtfy.com/?q=Pic+Simulator");
     }
     public void TimerReset()    //Reset timer and total time
     {
