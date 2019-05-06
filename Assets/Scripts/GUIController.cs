@@ -277,8 +277,8 @@ public class GUIController : MonoBehaviour
         getCodeLine(currentCommand).setRunning(true); // Mark first command
         updateScroll();
         TimerReset();
-        OutputChangedRA();
-        OutputChangedRB();
+        // OutputChangedRA();
+        // OutputChangedRB();
         refreshRamView();
         updateRegisterDisplay();
     }
