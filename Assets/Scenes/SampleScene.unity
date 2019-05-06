@@ -585,7 +585,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000053142125, y: 0.000000041183178}
+  m_AnchoredPosition: {x: -0.00003355698, y: 0.000000041183178}
   m_SizeDelta: {x: -4.4105325, y: 880}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &43438279
@@ -7348,7 +7348,7 @@ MonoBehaviour:
   m_Content: {fileID: 28436680}
   m_Horizontal: 1
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -8768,7 +8768,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00004625983, y: 0}
+  m_AnchoredPosition: {x: 0.000006975811, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &599018851
@@ -23538,8 +23538,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Content: {fileID: 599018850}
   m_Horizontal: 1
-  m_Vertical: 0
-  m_MovementType: 1
+  m_Vertical: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -26409,24 +26409,6 @@ MonoBehaviour:
     type: 3}
   registerTextTemplate: {fileID: 3656917326232008690, guid: 7450114dd19090e44a8756c38dba7f26,
     type: 3}
-  pinsRA:
-  - {fileID: 252556716}
-  - {fileID: 1072807038}
-  - {fileID: 913782361}
-  - {fileID: 165674236}
-  - {fileID: 2014533956}
-  - {fileID: 1221171834}
-  - {fileID: 376944867}
-  - {fileID: 296209417}
-  pinsRB:
-  - {fileID: 395669713}
-  - {fileID: 1985960840}
-  - {fileID: 438356091}
-  - {fileID: 1291067704}
-  - {fileID: 266851602}
-  - {fileID: 2132557123}
-  - {fileID: 411886007}
-  - {fileID: 1963316509}
   speedSlider: {fileID: 135969111}
 --- !u!1 &1891985005
 GameObject:
