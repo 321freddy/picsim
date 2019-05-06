@@ -56,7 +56,7 @@ public class GUIController : MonoBehaviour
             fileDropdown.options.Add(new Dropdown.OptionData(file.Name));
         }
 
-
+        loadRamView();
     }
 
     private void setSimulationRunning(bool running)
@@ -64,16 +64,8 @@ public class GUIController : MonoBehaviour
         simulationRunning = running;
 
         // Update go/pause button
-        if (simulationRunning)
-        {
-            pauseButton.SetActive(true);
-            goButton.SetActive(false);
-        }
-        else
-        {
-            pauseButton.SetActive(false);
-            goButton.SetActive(true);
-        }
+        pauseButton.SetActive(running);
+        goButton.SetActive(!running);
     }
 
     private CodeLineController getCodeLine(Command cmd)
@@ -202,7 +194,7 @@ public class GUIController : MonoBehaviour
         scrollRect.verticalNormalizedPosition = 1f;
 
         //Refresh View
-        loadRamView();
+        refreshRamView();
     }
 
     public void onFrequencySelected()
@@ -283,7 +275,6 @@ public class GUIController : MonoBehaviour
         Debug.Log("Reset program");
         simulation.Reset();
 
-        TimerReset();
 
         // Reset code color
         foreach (var codeLine in codeContainer.GetComponentsInChildren<CodeLineController>())
@@ -291,11 +282,15 @@ public class GUIController : MonoBehaviour
             codeLine.setRunning(false);
         }
 
-        updateRegisterDisplay();
         setSimulationRunning(false);
         currentCommand = simulation.getCurrentCommand();
         getCodeLine(currentCommand).setRunning(true); // Mark first command
         updateScroll();
+        TimerReset();
+        // OutputChangedRA();
+        // OutputChangedRB();
+        refreshRamView();
+        updateRegisterDisplay();
     }
     public void onHelpClicked()
     {
@@ -323,7 +318,6 @@ public class GUIController : MonoBehaviour
     public void OutputChangedRA()
     {
         int registerValue = 0;
-        byte registerRA = 0x05;
 
         // File selected
         if (fileSelected == true)
@@ -348,9 +342,10 @@ public class GUIController : MonoBehaviour
                 }
             }
             // Save claculated value at address 0x05 (RA)
-            simulation.Memory.setRaw(registerRA, (byte)registerValue);
+            simulation.Memory.PORTA = (byte)registerValue;
+            
             // Print value of RA register (HEX)
-            Debug.Log("Inhalt RA-Register: " + simulation.Memory.getRaw(registerRA).ToString("X"));
+            Debug.Log("Inhalt RA-Register: " + simulation.Memory.PORTA.ToString("X"));
             //Refresh View
             refreshRamView();
         }
@@ -377,7 +372,6 @@ public class GUIController : MonoBehaviour
     public void OutputChangedRB()
     {
         int registerValue = 0;
-        byte registerRB = 0x06;
 
         // File selected
         if (fileSelected == true)
@@ -402,9 +396,10 @@ public class GUIController : MonoBehaviour
                 }
             }
             // Save claculated value at address 0x05 (RA)
-            simulation.Memory.setRaw(registerRB, (byte)registerValue);
+            simulation.Memory.PORTB = (byte)registerValue;
+
             // Print value of RA register (HEX)
-            Debug.Log("Inhalt RB-Register: " + simulation.Memory.getRaw(registerRB).ToString("X"));
+            Debug.Log("Inhalt RB-Register: " + simulation.Memory.PORTB.ToString("X"));
             //Refresh View
             refreshRamView();
         }
@@ -466,7 +461,7 @@ public class GUIController : MonoBehaviour
                 // Rename eacht text-element with the same name as the block above
                 text.name = "Register: " + registerNumStr;
                 // Read memory and write the right value to the text-element
-                GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte) registerNumInt)).ToString("X2");
+                // GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte) registerNumInt)).ToString("X2");
             }
         }
     }
@@ -478,25 +473,34 @@ public class GUIController : MonoBehaviour
      */
     public void refreshRamView()
     {
-        int registerNumInt;
-        string registerNumStr;
-        for (int i = 0; i < 256; i++)
-        {
-            // Value
-            registerNumInt = i;
-            if (i < 16)
-            {
-                // Name
-                registerNumStr = "0" + registerNumInt.ToString("X");
-            }
-            else
-            {
-                // Name
-                registerNumStr = registerNumInt.ToString("X");
-            }
+        // int registerNumInt;
+        // string registerNumStr;
 
-            // Read memory and write the right value to the text-element
-            GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte)registerNumInt)).ToString("X2");
+        for (int y = 0; y < 32; y++)
+        {
+            var row = ramContainer.transform.GetChild(y);
+            for (int x = 0; x < 8; x++)
+            {
+                // // Value
+                // registerNumInt = i;
+                // if (i < 16)
+                // {
+                //     // Name
+                //     registerNumStr = "0" + registerNumInt.ToString("X");
+                // }
+                // else
+                // {
+                //     // Name
+                //     registerNumStr = registerNumInt.ToString("X");
+                // }
+
+                // // Read memory and write the right value to the text-element
+                // GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte)registerNumInt)).ToString("X2");
+
+
+                var block = row.GetChild(x);
+                block.GetComponentInChildren<Text>().text = simulation.Memory.getRaw((byte) (y * 8 + x)).ToString("X2");
+            }
         }
     }
     public void onSpeedChanged()
