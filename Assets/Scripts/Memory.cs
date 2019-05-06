@@ -31,19 +31,19 @@ public class Memory
         
 
         // Unchanged Registers
-        memory[Address.TMR0] = oldMemory[Address.TMR0];
-        memory[Address.FSR] = oldMemory[Address.FSR];
-        memory[Address.PORTA] = oldMemory[Address.PORTA];
-        memory[Address.PORTB] = oldMemory[Address.PORTB];
+        memory[Address.TMR0]   = oldMemory[Address.TMR0];
+        memory[Address.FSR]    = oldMemory[Address.FSR];
+        memory[Address.PORTA]  = oldMemory[Address.PORTA];
+        memory[Address.PORTB]  = oldMemory[Address.PORTB];
         memory[Address.EEDATA] = oldMemory[Address.EEDATA];
-        memory[Address.EEADR] = oldMemory[Address.EEADR];
+        memory[Address.EEADR]  = oldMemory[Address.EEADR];
 
-        RBIF = (byte) Bit.get(oldMemory[Address.INTCON], Bit.RBIF);
-        ZeroFlag = (byte) Bit.get(oldMemory[Address.STATUS], Bit.Z);
-        Carry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.C);
-        DigitCarry = (byte) Bit.get(oldMemory[Address.STATUS], Bit.DC);
+        RBIF                   = (byte) Bit.get(oldMemory[Address.INTCON], Bit.RBIF);
+        ZeroFlag               = (byte) Bit.get(oldMemory[Address.STATUS], Bit.Z);
+        Carry                  = (byte) Bit.get(oldMemory[Address.STATUS], Bit.C);
+        DigitCarry             = (byte) Bit.get(oldMemory[Address.STATUS], Bit.DC);
 
-        lastValueOfPortA = (byte) memory[Address.PORTA];
+        lastValueOfPortA       = (byte) memory[Address.PORTA];
     }
 
     public void pushStack(ushort value)
