@@ -25,7 +25,7 @@ namespace Commands
         {
             Debug.Log("running CALL");
             memory.pushStack((byte) (memory.ProgramCounter + 1));
-            memory.ProgramCounter = literal;
+            memory.ProgramCounter = (ushort) (literal + (Bit.get(memory.PCLATH, 3, 2) << 11));
             return 2;
         }
     }

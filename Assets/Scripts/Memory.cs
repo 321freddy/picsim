@@ -112,7 +112,15 @@ public class Memory
                 if (addr == Address.TMR0) Prescaler = 0; // Reset prescaler on TMR0 write
             }
 
-            memory[addr] = value; // Write value
+            if (addr == Address.PCL)
+            {
+                // apply upper PC bits of PCLATH
+                ProgramCounter = (ushort) (value + (Bit.mask(PCLATH, 5) << 8));
+            }
+            else
+            {
+                memory[addr] = value; // Write value
+            }
         }
     }
 
