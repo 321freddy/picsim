@@ -19,10 +19,10 @@ public class Memory
 
     public Memory()
     {
-        Reset();
+        Reset(true);
     }
 
-    public void Reset()
+    public void Reset(bool powerup = false)
     {
         var oldMemory = memory;
         wReg = 0;
@@ -31,6 +31,7 @@ public class Memory
         stackPos = 0;
         Prescaler = 0;
         OPTION = 0xFF;
+        Sleeping = false;
         
 
         // Unchanged Registers
@@ -48,6 +49,11 @@ public class Memory
 
         lastValueOfPortA       = (byte) memory[Address.PORTA];
         lastValueOfPortB       = (byte) memory[Address.PORTA];
+
+        if (powerup)
+        {
+            Status = (byte) Bit.set(Status, Bit.PD, 2); // set TO and PD on power on 
+        }
     }
 
     public void pushStack(ushort value)
@@ -111,23 +117,25 @@ public class Memory
     }
 
 
-        public byte getRaw(byte addr)
-        {
-            return (byte)memory[addr]; // Read value
-        }
-        public void setRaw(byte addr, byte value)
-        {
-            memory[addr] = (ushort) value; // Write value
-        }
-        public byte getStack(int index)
-        {
-            return (byte)stack[index];
-        }
+    public byte getRaw(byte addr)
+    {
+        return (byte)memory[addr]; // Read value
+    }
+
+    public void setRaw(byte addr, byte value)
+    {
+        memory[addr] = (ushort) value; // Write value
+    }
+
+    public byte getStack(int index)
+    {
+        return (byte)stack[index];
+    }
+
 
     public byte w_Register
     {
         get => wReg;
-
         set => wReg = value;
     }
     public byte Status
@@ -135,20 +143,20 @@ public class Memory
         get => (byte) memory[Address.STATUS];
         set => memory[Address.STATUS] = value;
     }
-        public byte Bank
+
+    public byte Bank
     {
         get => (byte)Bit.get(Status, Bit.RP0, 2);
-        }
+    }
 
-        public ushort ProgramCounter // 13 bit
+    public ushort ProgramCounter // 13 bit
     {
         get => memory[Address.PCL];
-
         set => memory[Address.PCL] = (ushort) Bit.mask(value, 13);
     }
 
 
-        public byte PCL
+    public byte PCL
     {
 
         get => (byte) memory[Address.PCL];
@@ -156,7 +164,7 @@ public class Memory
     }
 
 
-        public byte PCLATH
+    public byte PCLATH
     {
 
         get => (byte) memory[Address.PCLATH];
@@ -164,25 +172,25 @@ public class Memory
     }
 
 
-        public byte ZeroFlag
+    public byte ZeroFlag
     {
         get => (byte) Bit.get(Status, Bit.Z);
         set => Status = (byte) Bit.setTo(Status, Bit.Z, value);
     }
 
-        public byte Carry
+    public byte Carry
     {
         get => (byte) Bit.get(Status, Bit.C);
         set => Status = (byte) Bit.setTo(Status, Bit.C, value);
     }
 
-        public byte DigitCarry
+    public byte DigitCarry
     {
         get => (byte) Bit.get(Status, Bit.DC);
         set => Status = (byte) Bit.setTo(Status, Bit.DC, value);
     }
 
-        public byte INTCON
+    public byte INTCON
     {
         get => (byte) memory[Address.INTCON];
         set => memory[Address.INTCON] = value;
@@ -262,6 +270,8 @@ public class Memory
         }
     }
     
+    public bool Sleeping {get; set;}
+
     public void runRBEdgeDetection() // Returns true if selected edge is detected (only once for every edge)
     {
         // RB0/INT
@@ -281,9 +291,13 @@ public class Memory
         if (intEdge)
         {
             INTCON = (byte) Bit.set(INTCON, Bit.INTF);
-            // TODO:
+
             // Return from sleep if INTCON.INTE is set
             // But only jump ISR if GIE is set
+            if (Bit.get(INTCON, Bit.INTE) == 1)
+            {
+                Sleeping = false;
+            }
         }
 
         // RB:4-7 changed?

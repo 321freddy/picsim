@@ -22,7 +22,11 @@ namespace Commands
 
         protected override void runCommand(Memory memory)
         {
-            Debug.Log("running CLRWDT");
+            Debug.Log("running CLRWDT");    
+            memory.Prescaler = 0;
+            memory.Status = (byte) Bit.set(memory.Status, Bit.PD);
+            memory.Status = (byte) Bit.set(memory.Status, Bit.TO);
+            Timer.ClearWDT();
         }
     }
 }

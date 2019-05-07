@@ -3,10 +3,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
     public static class Timer
     {
         public static double microseconds_per_step;
+
+        public static bool TriggerWatchdog {get; private set;}
+
+        private static double lastTrigger = 0;
+        private static double totalTime = 0;
+        public static double TotalTime
+        {
+            get => totalTime;
+            set {
+                // Debug.Log("timer:"+lastTrigger+"|"+totalTime+"|"+TriggerWatchdog);
+                if (value < totalTime) // Reset
+                {
+                    totalTime = value;
+                    lastTrigger = value;
+                    TriggerWatchdog = false;
+                }
+                else
+                {
+                    totalTime = value;
+
+                    // Check if 18ms passed and trigger watchdog
+                    if (totalTime - lastTrigger >= 18000)
+                    {
+                        lastTrigger = totalTime;
+                        TriggerWatchdog = true;
+                    }
+                    else
+                    {
+                        TriggerWatchdog = false;
+                    }
+                }
+            }
+        }
+
+        public static void ClearWDT()
+        {
+            lastTrigger = totalTime;
+            TriggerWatchdog = false;
+        }
 
         public static void setFrequency(int frequencyIndex)
         {

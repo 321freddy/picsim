@@ -32,7 +32,6 @@ public class GUIController : MonoBehaviour
     private bool fileSelected = false;
 
     private int frequencyIndex;
-    private double total_time = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -212,8 +211,8 @@ public class GUIController : MonoBehaviour
              * Sleep is used to slow down the GUI a bit, only for optics, not functional
              */
             Timer.setFrequency(frequencyIndex);
-            total_time += Timer.microseconds_per_step * cycles;
-            GameObject.Find("Laufzeit").GetComponent<Text>().text = total_time.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
+            Timer.TotalTime += Timer.microseconds_per_step * cycles;
+            GameObject.Find("Laufzeit").GetComponent<Text>().text = Timer.TotalTime.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
 
             //Refresh View
             refreshRamView();
@@ -291,7 +290,7 @@ public class GUIController : MonoBehaviour
     public void TimerReset()    //Reset timer and total time
     {
         GameObject.Find("Laufzeit").GetComponent<Text>().text = Convert.ToString("0.00") + " µs";
-        total_time = 0;
+        Timer.TotalTime = 0;
     }
 
     /* OutputChangedRA():

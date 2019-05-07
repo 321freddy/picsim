@@ -66,7 +66,7 @@ public abstract class Command
             addToTMR0 = 1; // RA4 / T0CKI edge
         }
 
-        if (Bit.get(memory.OPTION, Bit.PSA) == 0) // with prescaler?
+        if (Bit.get(memory.OPTION, Bit.PSA) == 0) // TMR0 with prescaler?
         {
             memory.Prescaler += (byte) addToTMR0; // add to prescaler register
 
@@ -87,6 +87,36 @@ public abstract class Command
         }
 
         memory.TMR0 = (byte) result;
+    }
+
+    protected virtual void updateWatchdog(Memory memory)
+    {
+        // WATCHDOG
+        bool triggerWatchdog = Timer.TriggerWatchdog;
+        // Debug.Log("update wdt: trigger="+triggerWatchdog);
+
+        if (Bit.get(memory.OPTION, Bit.PSA) == 1) // Watchdog with prescaler?
+        {
+            // Debug.Log("prescaling wdt");
+            memory.Prescaler += triggerWatchdog ? (byte)1 : (byte)0; // add to prescaler register
+
+            // Divide by taking the bit of prescaler at position [PS2:PS0 + 1]
+            int bit = memory.PS; // +1
+            triggerWatchdog = Bit.get(memory.Prescaler, bit, 8) > 0;
+
+            if (triggerWatchdog) // Reset prescaler if bit is 1
+            {
+                memory.Prescaler = (byte) Bit.mask(memory.Prescaler, bit); 
+            }
+        }
+
+        // Debug.Log("after wdt: trigger="+triggerWatchdog);
+        if (triggerWatchdog) // trigger reset
+        {
+            if (!memory.Sleeping) memory.Reset();
+            memory.Sleeping = false;
+            memory.Status = (byte) Bit.clear(memory.Status, Bit.TO);
+        }
     }
 
     protected virtual void checkForInterrupt(Memory memory)
@@ -134,6 +164,7 @@ public abstract class Command
         for (int i = 0; i < cycles; i++)
         {
             updateTimer(memory);
+            updateWatchdog(memory);
             checkForInterrupt(memory);
         }
 
