@@ -90,7 +90,7 @@ public abstract class Command
         memory.TMR0 = (byte) result;
     }
 
-    protected virtual void updateWatchdog(Memory memory)
+    protected virtual bool updateWatchdog(Memory memory)
     {
         // WATCHDOG
         bool triggerWatchdog = Timer.TriggerWatchdog;
@@ -119,6 +119,8 @@ public abstract class Command
             memory.Sleeping = false;
             memory.Status = (byte) Bit.clear(memory.Status, Bit.TO);
         }
+
+        return triggerWatchdog;
     }
 
     protected virtual void checkForInterrupt(Memory memory)
@@ -159,7 +161,7 @@ public abstract class Command
     
     protected virtual void fireInterrupt(Memory memory)
     {
-        memory.pushStack((byte) (memory.ProgramCounter + 1));
+        memory.pushStack(memory.ProgramCounter); // Program counter has already been updated
         memory.ProgramCounter = 4;
         memory.INTCON = (byte) Bit.clear(memory.INTCON, Bit.GIE);
     }
@@ -173,9 +175,10 @@ public abstract class Command
         for (int i = 0; i < cycles; i++)
         {
             updateTimer(memory);
-            updateWatchdog(memory);
-            checkForInterrupt(memory);
+            if (updateWatchdog(memory)) return cycles; // Terminate command if watchdog triggers
         }
+
+        checkForInterrupt(memory);
 
         return cycles;
     }

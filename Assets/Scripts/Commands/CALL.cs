@@ -24,7 +24,7 @@ namespace Commands
         protected override int updateProgramCounter(Memory memory)
         {
             Debug.Log("running CALL");
-            memory.pushStack((byte) (memory.ProgramCounter + 1));
+            memory.pushStack((ushort) (memory.ProgramCounter + 1));
             memory.ProgramCounter = (ushort) (literal + (Bit.get(memory.PCLATH, 3, 2) << 11));
             return 2;
         }
