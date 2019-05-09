@@ -114,6 +114,7 @@ public abstract class Command
         // Debug.Log("after wdt: trigger="+triggerWatchdog);
         if (triggerWatchdog) // trigger reset
         {
+            Debug.Log("WATCHDOG TRIGGERED");
             if (!memory.Sleeping) memory.Reset();
             memory.Sleeping = false;
             memory.Status = (byte) Bit.clear(memory.Status, Bit.TO);

@@ -204,7 +204,9 @@ public class GUIController : MonoBehaviour
             // Update GUI
             getCodeLine(currentCommand).setRunning(false); // Update next command color to green
             currentCommand = simulation.getCurrentCommand();
-            getCodeLine(currentCommand).setRunning(true);
+            getCodeLine(currentCommand)?.setRunning(true);
+            // if (currentCommand == null)                   Debug.Log("NO CMD in line: "+simulation.Memory.ProgramCounter);
+            // else if (getCodeLine(currentCommand) == null) Debug.Log("NO CODE LINE in line: "+currentCommand.Line);
 
             updateRegisterDisplay();
             updateScroll();
