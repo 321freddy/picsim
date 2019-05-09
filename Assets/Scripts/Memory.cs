@@ -12,6 +12,7 @@ public class Memory
     private ushort[] memory = new ushort[0x100];
     private ushort[] stack = new ushort[8];
     private int stackPos = 0;
+    private byte[] eeprom = new byte[64];
 
     private byte lastValueOfPortA;
     private byte lastValueOfPortB;
@@ -46,6 +47,8 @@ public class Memory
         ZeroFlag               = (byte) Bit.get(oldMemory[Address.STATUS], Bit.Z);
         Carry                  = (byte) Bit.get(oldMemory[Address.STATUS], Bit.C);
         DigitCarry             = (byte) Bit.get(oldMemory[Address.STATUS], Bit.DC);
+        Status                 = (byte) Bit.set(oldMemory[Address.STATUS], Bit.TO);
+        Status                 = (byte) Bit.set(oldMemory[Address.STATUS], Bit.PD);
 
         lastValueOfPortA       = (byte) memory[Address.PORTA];
         lastValueOfPortB       = (byte) memory[Address.PORTA];
@@ -77,6 +80,7 @@ public class Memory
             if (addr == 0x07 || addr > 0x4F) return 0; // Unimplemented memory locations
             if (addr == Address.INDF) return this[this[Address.FSR]]; // Indirect addressing
             if (addr == Address.PCLATH) return 0; // PCLATH is write only
+            if (addr == Address.EECON2) return 0;
 
             if (addr != Address.PCL &&      // These registers are the same for every bank
                 addr != Address.STATUS &&
@@ -107,12 +111,37 @@ public class Memory
                 addr = (byte)(addr + (Bank << 7)); // Include bank bit in address
             }
             
-            if (Bit.get(OPTION, Bit.PSA) == 0) // Prescaler assigned to Timer0
+            if (addr == Address.TMR0) // Reset prescaler on TMR0 write and Prescaler assigned to Timer0
             {
-                if (addr == Address.TMR0) Prescaler = 0; // Reset prescaler on TMR0 write
+                if (Bit.get(OPTION, Bit.PSA) == 0) Prescaler = 0;
             }
+            else if (addr == Address.EECON1)
+            {
+                EECON1 = (byte) (value & 0b11100); // only set EEIF,WRERR,WREN bits
 
-            if (addr == Address.PCL)
+                if (Bit.get(value, Bit.WR) == 1)
+                {
+                    EECON1 = (byte) Bit.set(EECON1, Bit.WR); // set WR bit
+                }
+                if (Bit.get(value, Bit.RD) == 1)
+                {
+                    readEEPROM(); // read directly
+                }
+            }
+            else if (addr == Address.EECON2) // initiate EEPROM write
+            {
+                if (EECON2 == 0x55 && value == 0xAA)
+                {
+                    if (Bit.get(value, Bit.WR) == 1)
+                    {
+                        writeEEPROM();
+                        EECON1 = (byte) Bit.clear(EECON1, Bit.WR); // clear WR bit
+                    }
+                }
+
+                EECON2 = value;
+            }
+            else if (addr == Address.PCL)
             {
                 // apply upper PC bits of PCLATH
                 ProgramCounter = (ushort) (value + (Bit.mask(PCLATH, 5) << 8));
@@ -260,6 +289,30 @@ public class Memory
         set => memory[Address.TRISB] = value;
     }
     
+    public byte EEADR
+    {
+        get => (byte) memory[Address.EEADR];
+        set => memory[Address.EEADR] = value;
+    }
+
+    public byte EEDATA
+    {
+        get => (byte) memory[Address.EEDATA];
+        set => memory[Address.EEDATA] = value;
+    }
+    
+    public byte EECON1
+    {
+        get => (byte) memory[Address.EECON1];
+        set => memory[Address.EECON1] = value;
+    }
+
+    public byte EECON2
+    {
+        get => (byte) memory[Address.EECON2];
+        set => memory[Address.EECON2] = value;
+    }
+    
     public bool runT0CKIEdgeDetection() // Returns true if selected edge is detected (only once for every edge)
     {
         var now = Bit.get(PORTA, Bit.RA4);
@@ -315,6 +368,32 @@ public class Memory
         }
 
         lastValueOfPortB = PORTB;
+    }
+
+    public void readEEPROM()
+    {
+        if (EEADR >= eeprom.Length)
+        {
+            EEDATA = 0; // unimplemented eeprom locations
+        }
+        else
+        {
+            EEDATA = eeprom[EEADR];
+        }
+    }
+
+    public void writeEEPROM()
+    {
+        if (Bit.get(EECON1, Bit.WREN) == 1)
+        {
+            if (EEADR < eeprom.Length) // limited to 64 bytes
+            {
+                eeprom[EEADR] = EEDATA;
+            }
+
+            EECON1 = (byte) Bit.set(EECON1, Bit.EEIF);
+            EECON1 = (byte) Bit.clear(EECON1, Bit.WRERR);
+        }
     }
 }
 

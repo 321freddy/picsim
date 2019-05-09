@@ -145,6 +145,13 @@ public abstract class Command
                 Debug.Log("INTERRUPT RB");
                 fireInterrupt(memory);
             }
+            else 
+            if (Bit.get(memory.INTCON, Bit.EEIE) == 1 && // EEPROM interrupt
+                Bit.get(memory[Address.EECON1], Bit.EEIF) == 1) 
+            {
+                Debug.Log("INTERRUPT EEPROM");
+                fireInterrupt(memory);
+            }
         }
     }
     
