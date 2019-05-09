@@ -12,7 +12,7 @@ namespace Commands
         private byte address;
         private int bit;
 
-        public BCF(ushort opcode) : base(opcode)
+        public BCF(ushort opcode, int line) : base(opcode, line)
         {
             address = (byte)Bit.mask(opcode, 7);
             bit = Bit.get(opcode, 7, 3);

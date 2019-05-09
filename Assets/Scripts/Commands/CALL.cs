@@ -11,7 +11,7 @@ namespace Commands
     {
         private ushort literal;
 
-        public CALL(ushort opcode) : base(opcode)
+        public CALL(ushort opcode, int line) : base(opcode, line)
         {
             literal = (ushort) Bit.mask(opcode, 11);
         }

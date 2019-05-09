@@ -11,7 +11,7 @@ namespace Commands
     {
         private byte address;
 
-        public MOVWF(ushort opcode) : base(opcode)
+        public MOVWF(ushort opcode, int line) : base(opcode, line)
         {
             address = (byte) Bit.mask(opcode, 7);
         }

@@ -9,7 +9,7 @@ namespace Commands
 {
     class SLEEP : Command
     {
-        public SLEEP(ushort opcode) : base(opcode)
+        public SLEEP(ushort opcode, int line) : base(opcode, line)
         {
 
         }

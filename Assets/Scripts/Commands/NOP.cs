@@ -9,7 +9,7 @@ namespace Commands
 {
     class NOP : Command
     {
-        public NOP(ushort opcode) : base(opcode)
+        public NOP(ushort opcode, int line) : base(opcode, line)
         {
 
         }

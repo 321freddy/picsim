@@ -9,7 +9,7 @@ namespace Commands
 {
     class RETFIE : Command
     {
-        public RETFIE(ushort opcode) : base(opcode)
+        public RETFIE(ushort opcode, int line) : base(opcode, line)
         {
             Debug.Log("RETFIE");
         }

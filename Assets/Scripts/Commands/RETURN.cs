@@ -9,7 +9,7 @@ namespace Commands
 {
     class RETURN : Command
     {
-        public RETURN(ushort opcode) : base(opcode)
+        public RETURN(ushort opcode, int line) : base(opcode, line)
         {
 
         }

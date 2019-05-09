@@ -11,7 +11,7 @@ namespace Commands
     {
         private byte address;
 
-        public CLRF(ushort opcode) : base(opcode)
+        public CLRF(ushort opcode, int line) : base(opcode, line)
         {
             address = (byte)Bit.mask(opcode, 7);
         }

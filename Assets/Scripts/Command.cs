@@ -11,9 +11,11 @@ public abstract class Command
     public int Line { get; private set; } // Line number in original source code
     public bool breakpoint = false;
 
-    public static Command Parse(string command, int line)
+    public static Command Parse(string command, int line, int internalLine)
     {
-        var args = new object[] { Convert.ToUInt16(command, 16) };
+        var checkArgs  = new object[] { Convert.ToUInt16(command, 16) };
+        var constrArgs = new object[] { checkArgs[0], internalLine };
+
         var types = Assembly
                     .GetExecutingAssembly()
                     .GetTypes()
@@ -23,11 +25,10 @@ public abstract class Command
         foreach (var commandType in types)
         {
             // Check if the mask and OpCode matches the command
-            if ((bool) commandType.GetMethod("check").Invoke(null, args))
+            if ((bool) commandType.GetMethod("check").Invoke(null, checkArgs))
             {
-
                 // Mask and OpCode matches...
-                var cmd = (Command) commandType.GetConstructors()[0].Invoke(args);
+                var cmd = (Command) commandType.GetConstructors()[0].Invoke(constrArgs);
                 cmd.Line = line;
                 return cmd;
             }
@@ -36,7 +37,7 @@ public abstract class Command
         throw new Exception("Unbekannter Befehl: " + command);
     }
 
-    public Command(ushort opcode)
+    public Command(ushort opcode, int line)
     {
         
     }

@@ -9,7 +9,7 @@ namespace Commands
 {
     class CLRWDT : Command
     {
-        public CLRWDT(ushort opcode) : base(opcode)
+        public CLRWDT(ushort opcode, int line) : base(opcode, line)
         {
             Debug.Log("CLRWDT");
         }
