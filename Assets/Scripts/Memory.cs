@@ -365,7 +365,7 @@ public class Memory
         }
 
         // RB:4-7 changed?
-        if (Bit.get(PORTB, 4, 4) != Bit.get(lastValueOfPortB, 4, 4))
+        if (Bit.get(PORTB & TRISB, 4, 4) != Bit.get(lastValueOfPortB & TRISB, 4, 4))
         {
             INTCON = (byte) Bit.set(INTCON, Bit.RBIF);
         }
