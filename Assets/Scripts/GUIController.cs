@@ -172,7 +172,10 @@ public class GUIController : MonoBehaviour
         // Set command references on code line objects
         foreach (var cmd in simulation.Commands)
         {
-            codeLines[cmd.Line].Command = cmd;
+            if (cmd != null)
+            {
+                codeLines[cmd.Line].Command = cmd;
+            }
         }
 
         goButton.GetComponent<Button>().interactable = true;
