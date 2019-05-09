@@ -32,6 +32,8 @@ public class Memory
         stackPos = 0;
         Prescaler = 0;
         OPTION = 0xFF;
+        TRISA = 0xFF;
+        TRISB = 0xFF;
         Sleeping = false;
         
 
@@ -51,7 +53,7 @@ public class Memory
         Status                 = (byte) Bit.set(oldMemory[Address.STATUS], Bit.PD);
 
         lastValueOfPortA       = (byte) memory[Address.PORTA];
-        lastValueOfPortB       = (byte) memory[Address.PORTA];
+        lastValueOfPortB       = (byte) memory[Address.PORTB];
 
         if (powerup)
         {
