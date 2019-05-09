@@ -125,7 +125,9 @@ public class GUIController : MonoBehaviour
     {
         if (Input.GetMouseButton(0)) return;
 
-        var line = getCodeLine(currentCommand).GetComponent<RectTransform>();
+        var line = getCodeLine(currentCommand)?.GetComponent<RectTransform>();
+        if (line == null) return;
+
         var container = codeContainer.GetComponent<RectTransform>();
         var viewport = scrollRect.GetComponent<RectTransform>();
         var lineY = -line.localPosition.y;
