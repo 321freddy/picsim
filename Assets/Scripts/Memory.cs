@@ -111,11 +111,12 @@ public class Memory
                 addr = (byte)(addr + (Bank << 7)); // Include bank bit in address
             }
             
-            if (addr == Address.TMR0) // Reset prescaler on TMR0 write and Prescaler assigned to Timer0
+            if (addr == Address.TMR0 && Bit.get(OPTION, Bit.PSA) == 0)
             {
-                if (Bit.get(OPTION, Bit.PSA) == 0) Prescaler = 0;
+                Prescaler = 0; // Reset prescaler on TMR0 write and Prescaler assigned to Timer0
             }
-            else if (addr == Address.EECON1)
+
+            if (addr == Address.EECON1)
             {
                 EECON1 = (byte) (value & 0b11100); // only set EEIF,WRERR,WREN bits
 
