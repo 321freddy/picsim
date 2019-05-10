@@ -9,7 +9,7 @@ namespace Commands
 {
     class CLRW : Command
     {
-        public CLRW(ushort opcode) : base(opcode)
+        public CLRW(ushort opcode, int line) : base(opcode, line)
         {
 
         }

@@ -8,7 +8,7 @@
                     00008           
                     00009           ;Hinweis:
                     00010           ;Bei der indirekten Adressierung werden die Register "IND" oder auch als
-                    00011           ;"indirect addr" bezeichnet und das Register FSR (File Select Register)
+                    00011           ;"indirect" bezeichnet und das Register FSR (File Select Register)
                     00012           ;benutzt. Dabei beinhaltet das FSR-Register die Zieladresse in die etwas
                     00013           ;geschrieben oder von der etwas gelesen werden soll. Der eigentliche 
                     00014           ;Zugriff erfolgt über das Ansprechen der Registeradresse 0 (IND). Der PIC

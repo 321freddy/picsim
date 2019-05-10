@@ -11,9 +11,14 @@ namespace Commands
     {
         private ushort literal;
 
-        public GOTO(ushort opcode) : base(opcode)
+        public GOTO(ushort opcode, int line) : base(opcode, line)
         {
             literal = (ushort) Bit.mask(opcode, 11);
+
+            if (literal == line) // infinite loop
+            {
+                breakpoint = true;
+            }
         }
 
         public static bool check(ushort opcode) // Return true if opcode contains this command
@@ -24,7 +29,7 @@ namespace Commands
         protected override int updateProgramCounter(Memory memory)
         {
             Debug.Log("running GOTO");
-            memory.ProgramCounter = literal;
+            memory.ProgramCounter = (ushort) (literal + (Bit.get(memory.PCLATH, 3, 2) << 11));
             return 2;
         }
     }

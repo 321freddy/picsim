@@ -11,7 +11,7 @@ namespace Commands
     {
         private ushort literal;
 
-        public CALL(ushort opcode) : base(opcode)
+        public CALL(ushort opcode, int line) : base(opcode, line)
         {
             literal = (ushort) Bit.mask(opcode, 11);
         }
@@ -24,8 +24,8 @@ namespace Commands
         protected override int updateProgramCounter(Memory memory)
         {
             Debug.Log("running CALL");
-            memory.pushStack((byte) (memory.ProgramCounter + 1));
-            memory.ProgramCounter = literal;
+            memory.pushStack((ushort) (memory.ProgramCounter + 1));
+            memory.ProgramCounter = (ushort) (literal + (Bit.get(memory.PCLATH, 3, 2) << 11));
             return 2;
         }
     }

@@ -11,7 +11,7 @@ namespace Commands
     {
         private byte literal;
 
-        public RETLW(ushort opcode) : base(opcode)
+        public RETLW(ushort opcode, int line) : base(opcode, line)
         {
             literal = (byte) Bit.mask(opcode, 8);
         }

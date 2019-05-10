@@ -32,7 +32,6 @@ public class GUIController : MonoBehaviour
     private bool fileSelected = false;
 
     private int frequencyIndex;
-    private double total_time = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -126,7 +125,9 @@ public class GUIController : MonoBehaviour
     {
         if (Input.GetMouseButton(0)) return;
 
-        var line = getCodeLine(currentCommand).GetComponent<RectTransform>();
+        var line = getCodeLine(currentCommand)?.GetComponent<RectTransform>();
+        if (line == null) return;
+
         var container = codeContainer.GetComponent<RectTransform>();
         var viewport = scrollRect.GetComponent<RectTransform>();
         var lineY = -line.localPosition.y;
@@ -173,7 +174,10 @@ public class GUIController : MonoBehaviour
         // Set command references on code line objects
         foreach (var cmd in simulation.Commands)
         {
-            codeLines[cmd.Line].Command = cmd;
+            if (cmd != null)
+            {
+                codeLines[cmd.Line].Command = cmd;
+            }
         }
 
         goButton.GetComponent<Button>().interactable = true;
@@ -202,7 +206,9 @@ public class GUIController : MonoBehaviour
             // Update GUI
             getCodeLine(currentCommand).setRunning(false); // Update next command color to green
             currentCommand = simulation.getCurrentCommand();
-            getCodeLine(currentCommand).setRunning(true);
+            getCodeLine(currentCommand)?.setRunning(true);
+            // if (currentCommand == null)                   Debug.Log("NO CMD in line: "+simulation.Memory.ProgramCounter);
+            // else if (getCodeLine(currentCommand) == null) Debug.Log("NO CODE LINE in line: "+currentCommand.Line);
 
             updateRegisterDisplay();
             updateScroll();
@@ -212,8 +218,8 @@ public class GUIController : MonoBehaviour
              * Sleep is used to slow down the GUI a bit, only for optics, not functional
              */
             Timer.setFrequency(frequencyIndex);
-            total_time += Timer.microseconds_per_step * cycles;
-            GameObject.Find("Laufzeit").GetComponent<Text>().text = total_time.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
+            Timer.TotalTime += Timer.microseconds_per_step * cycles;
+            GameObject.Find("Laufzeit").GetComponent<Text>().text = Timer.TotalTime.ToString("0.00") + " µs"; //Write Data to GUI after formating it 
 
             //Refresh View
             refreshRamView();
@@ -291,7 +297,7 @@ public class GUIController : MonoBehaviour
     public void TimerReset()    //Reset timer and total time
     {
         GameObject.Find("Laufzeit").GetComponent<Text>().text = Convert.ToString("0.00") + " µs";
-        total_time = 0;
+        Timer.TotalTime = 0;
     }
 
     /* OutputChangedRA():

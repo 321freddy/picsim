@@ -26,7 +26,7 @@ public class CodeLineController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        setBreakpointActive(false);
+        setBreakpointActive(Command?.breakpoint ?? false);
     }
 
     public void onClick()

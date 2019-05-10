@@ -12,14 +12,18 @@ public class Memory
     private ushort[] memory = new ushort[0x100];
     private ushort[] stack = new ushort[8];
     private int stackPos = 0;
+    private byte[] eeprom = new byte[64];
+
+    private byte lastValueOfPortA;
+    private byte lastValueOfPortB;
 
 
     public Memory()
     {
-        Reset();
+        Reset(true);
     }
 
-    public void Reset()
+    public void Reset(bool powerup = false)
     {
         var oldMemory = memory;
         wReg = 0;
@@ -28,6 +32,9 @@ public class Memory
         stackPos = 0;
         Prescaler = 0;
         OPTION = 0xFF;
+        TRISA = 0xFF;
+        TRISB = 0xFF;
+        Sleeping = false;
         
 
         // Unchanged Registers
@@ -42,8 +49,16 @@ public class Memory
         ZeroFlag               = (byte) Bit.get(oldMemory[Address.STATUS], Bit.Z);
         Carry                  = (byte) Bit.get(oldMemory[Address.STATUS], Bit.C);
         DigitCarry             = (byte) Bit.get(oldMemory[Address.STATUS], Bit.DC);
+        Status                 = (byte) Bit.set(oldMemory[Address.STATUS], Bit.TO);
+        Status                 = (byte) Bit.set(oldMemory[Address.STATUS], Bit.PD);
 
         lastValueOfPortA       = (byte) memory[Address.PORTA];
+        lastValueOfPortB       = (byte) memory[Address.PORTB];
+
+        if (powerup)
+        {
+            Status = (byte) Bit.set(Status, Bit.PD, 2); // set TO and PD on power on 
+        }
     }
 
     public void pushStack(ushort value)
@@ -67,6 +82,7 @@ public class Memory
             if (addr == 0x07 || addr > 0x4F) return 0; // Unimplemented memory locations
             if (addr == Address.INDF) return this[this[Address.FSR]]; // Indirect addressing
             if (addr == Address.PCLATH) return 0; // PCLATH is write only
+            if (addr == Address.EECON2) return 0;
 
             if (addr != Address.PCL &&      // These registers are the same for every bank
                 addr != Address.STATUS &&
@@ -97,33 +113,69 @@ public class Memory
                 addr = (byte)(addr + (Bank << 7)); // Include bank bit in address
             }
             
-            if (Bit.get(OPTION, Bit.PSA) == 0) // Prescaler assigned to Timer0
+            if (addr == Address.TMR0 && Bit.get(OPTION, Bit.PSA) == 0)
             {
-                if (addr == Address.TMR0) Prescaler = 0; // Reset prescaler on TMR0 write
+                Prescaler = 0; // Reset prescaler on TMR0 write and Prescaler assigned to Timer0
             }
 
-            memory[addr] = value; // Write value
+            if (addr == Address.EECON1)
+            {
+                EECON1 = (byte) (value & 0b11100); // only set EEIF,WRERR,WREN bits
+
+                if (Bit.get(value, Bit.WR) == 1)
+                {
+                    EECON1 = (byte) Bit.set(EECON1, Bit.WR); // set WR bit
+                }
+                if (Bit.get(value, Bit.RD) == 1)
+                {
+                    readEEPROM(); // read directly
+                }
+            }
+            else if (addr == Address.EECON2) // initiate EEPROM write
+            {
+                if (EECON2 == 0x55 && value == 0xAA)
+                {
+                    if (Bit.get(value, Bit.WR) == 1)
+                    {
+                        writeEEPROM();
+                        EECON1 = (byte) Bit.clear(EECON1, Bit.WR); // clear WR bit
+                    }
+                }
+
+                EECON2 = value;
+            }
+            else if (addr == Address.PCL)
+            {
+                // apply upper PC bits of PCLATH
+                ProgramCounter = (ushort) (value + (Bit.mask(PCLATH, 5) << 8));
+            }
+            else
+            {
+                memory[addr] = value; // Write value
+            }
         }
     }
 
 
-        public byte getRaw(byte addr)
-        {
-            return (byte)memory[addr]; // Read value
-        }
-        public void setRaw(byte addr, byte value)
-        {
-            memory[addr] = (ushort) value; // Write value
-        }
-        public byte getStack(int index)
-        {
-            return (byte)stack[index];
-        }
+    public byte getRaw(byte addr)
+    {
+        return (byte)memory[addr]; // Read value
+    }
+
+    public void setRaw(byte addr, byte value)
+    {
+        memory[addr] = (ushort) value; // Write value
+    }
+
+    public byte getStack(int index)
+    {
+        return (byte)stack[index];
+    }
+
 
     public byte w_Register
     {
         get => wReg;
-
         set => wReg = value;
     }
     public byte Status
@@ -131,20 +183,20 @@ public class Memory
         get => (byte) memory[Address.STATUS];
         set => memory[Address.STATUS] = value;
     }
-        public byte Bank
+
+    public byte Bank
     {
         get => (byte)Bit.get(Status, Bit.RP0, 2);
-        }
+    }
 
-        public ushort ProgramCounter // 13 bit
+    public ushort ProgramCounter // 13 bit
     {
         get => memory[Address.PCL];
-
         set => memory[Address.PCL] = (ushort) Bit.mask(value, 13);
     }
 
 
-        public byte PCL
+    public byte PCL
     {
 
         get => (byte) memory[Address.PCL];
@@ -152,7 +204,7 @@ public class Memory
     }
 
 
-        public byte PCLATH
+    public byte PCLATH
     {
 
         get => (byte) memory[Address.PCLATH];
@@ -160,25 +212,25 @@ public class Memory
     }
 
 
-        public byte ZeroFlag
+    public byte ZeroFlag
     {
         get => (byte) Bit.get(Status, Bit.Z);
         set => Status = (byte) Bit.setTo(Status, Bit.Z, value);
     }
 
-        public byte Carry
+    public byte Carry
     {
         get => (byte) Bit.get(Status, Bit.C);
         set => Status = (byte) Bit.setTo(Status, Bit.C, value);
     }
 
-        public byte DigitCarry
+    public byte DigitCarry
     {
         get => (byte) Bit.get(Status, Bit.DC);
         set => Status = (byte) Bit.setTo(Status, Bit.DC, value);
     }
 
-        public byte INTCON
+    public byte INTCON
     {
         get => (byte) memory[Address.INTCON];
         set => memory[Address.INTCON] = value;
@@ -213,7 +265,7 @@ public class Memory
     public byte PORTA
     {
         get => (byte) memory[Address.PORTA];
-        set{
+        set {
             lastValueOfPortA = (byte) memory[Address.PORTA];
             memory[Address.PORTA] = value;
         }
@@ -222,7 +274,10 @@ public class Memory
     public byte PORTB
     {
         get => (byte) memory[Address.PORTB];
-        set => memory[Address.PORTB] = value;
+        set {
+            lastValueOfPortB = (byte) memory[Address.PORTB];
+            memory[Address.PORTB] = value;
+        }
     }
 
     public byte TRISA
@@ -236,7 +291,31 @@ public class Memory
         get => (byte) memory[Address.TRISB];
         set => memory[Address.TRISB] = value;
     }
-    private byte lastValueOfPortA;
+    
+    public byte EEADR
+    {
+        get => (byte) memory[Address.EEADR];
+        set => memory[Address.EEADR] = value;
+    }
+
+    public byte EEDATA
+    {
+        get => (byte) memory[Address.EEDATA];
+        set => memory[Address.EEDATA] = value;
+    }
+    
+    public byte EECON1
+    {
+        get => (byte) memory[Address.EECON1];
+        set => memory[Address.EECON1] = value;
+    }
+
+    public byte EECON2
+    {
+        get => (byte) memory[Address.EECON2];
+        set => memory[Address.EECON2] = value;
+    }
+    
     public bool runT0CKIEdgeDetection() // Returns true if selected edge is detected (only once for every edge)
     {
         var now = Bit.get(PORTA, Bit.RA4);
@@ -252,6 +331,71 @@ public class Memory
         else // falling edge 1->0
         {
             return last > now;
+        }
+    }
+    
+    public bool Sleeping {get; set;}
+
+    public void runRBEdgeDetection() // Returns true if selected edge is detected (only once for every edge)
+    {
+        // RB0/INT
+        var now = Bit.get(PORTB, Bit.INT);
+        var last = Bit.get(lastValueOfPortB, Bit.INT);
+        bool intEdge = false;
+
+        if (Bit.get(OPTION, Bit.INTEDG) == 1) // rising edge 0->1
+        {
+            intEdge = last < now;
+        }
+        else // falling edge 1->0
+        {
+            intEdge = last > now;
+        }
+
+        if (intEdge)
+        {
+            INTCON = (byte) Bit.set(INTCON, Bit.INTF);
+
+            // Return from sleep if INTCON.INTE is set
+            // But only jump ISR if GIE is set
+            if (Bit.get(INTCON, Bit.INTE) == 1)
+            {
+                Sleeping = false;
+            }
+        }
+
+        // RB:4-7 changed?
+        if (Bit.get(PORTB & TRISB, 4, 4) != Bit.get(lastValueOfPortB & TRISB, 4, 4))
+        {
+            INTCON = (byte) Bit.set(INTCON, Bit.RBIF);
+        }
+
+        lastValueOfPortB = PORTB;
+    }
+
+    public void readEEPROM()
+    {
+        if (EEADR >= eeprom.Length)
+        {
+            EEDATA = 0; // unimplemented eeprom locations
+        }
+        else
+        {
+            EEDATA = eeprom[EEADR];
+        }
+    }
+
+    public void writeEEPROM()
+    {
+        if (Bit.get(EECON1, Bit.WREN) == 1)
+        {
+            if (EEADR < eeprom.Length) // limited to 64 bytes
+            {
+                eeprom[EEADR] = EEDATA;
+            }
+
+            EECON1 = (byte) Bit.set(EECON1, Bit.EEIF);
+            EECON1 = (byte) Bit.clear(EECON1, Bit.WRERR);
         }
     }
 }

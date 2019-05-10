@@ -12,7 +12,7 @@ namespace Commands
         private byte address;
         private bool writeToMemory;
 
-        public XORWF(ushort opcode) : base(opcode)
+        public XORWF(ushort opcode, int line) : base(opcode, line)
         {
             address = (byte)Bit.mask(opcode, 7);
             writeToMemory = Bit.get(opcode, 7) == 1;

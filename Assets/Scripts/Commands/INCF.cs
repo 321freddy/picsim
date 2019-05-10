@@ -12,7 +12,7 @@ namespace Commands
         private byte address;
         private bool writeToMemory;
 
-        public INCF(ushort opcode) : base(opcode)
+        public INCF(ushort opcode, int line) : base(opcode, line)
         {
             address = (byte)Bit.mask(opcode, 7);
             writeToMemory = Bit.get(opcode, 7) == 1;

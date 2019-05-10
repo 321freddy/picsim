@@ -11,7 +11,7 @@ namespace Commands
     {
         private byte literal;
 
-        public ANDLW(ushort opcode) : base(opcode)
+        public ANDLW(ushort opcode, int line) : base(opcode, line)
         {
             literal = (byte) Bit.mask(opcode, 8);
         }

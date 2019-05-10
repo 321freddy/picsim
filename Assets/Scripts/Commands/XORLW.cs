@@ -11,7 +11,7 @@ namespace Commands
     {
         private byte literal;
 
-        public XORLW(ushort opcode) : base(opcode)
+        public XORLW(ushort opcode, int line) : base(opcode, line)
         {
             literal = (byte) Bit.mask(opcode, 8);
         }

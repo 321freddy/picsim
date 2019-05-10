@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,15 +12,22 @@ class Simulation
 
     public static Simulation CreateFromProgram(List<string> lines)
     {
-        var commands = new List<Command>();
+        var commands = new Command[10];
         int lineNum = 0;
 
         foreach (var line in lines)
         {
             if (!string.IsNullOrWhiteSpace(line.Substring(0, 8)))
             {
-                var command = Command.Parse(line.Substring(5, 4), lineNum);
-                commands.Add(command);
+                var internalLine = Convert.ToInt32(line.Substring(0, 4), 16);
+                var command = Command.Parse(line.Substring(5, 4), lineNum, internalLine);
+                
+                if (internalLine >= commands.Length) // Resize array if too small
+                {
+                    Array.Resize(ref commands, internalLine + 11);
+                }
+
+                commands[internalLine] = command;
             }
 
             lineNum++;
@@ -27,7 +35,7 @@ class Simulation
 
         return new Simulation
         {
-            Commands = commands.ToArray(),
+            Commands = commands,
             Memory = new Memory(),
         };
     }

@@ -11,9 +11,11 @@ public abstract class Command
     public int Line { get; private set; } // Line number in original source code
     public bool breakpoint = false;
 
-    public static Command Parse(string command, int line)
+    public static Command Parse(string command, int line, int internalLine)
     {
-        var args = new object[] { Convert.ToUInt16(command, 16) };
+        var checkArgs  = new object[] { Convert.ToUInt16(command, 16) };
+        var constrArgs = new object[] { checkArgs[0], internalLine };
+
         var types = Assembly
                     .GetExecutingAssembly()
                     .GetTypes()
@@ -23,11 +25,10 @@ public abstract class Command
         foreach (var commandType in types)
         {
             // Check if the mask and OpCode matches the command
-            if ((bool) commandType.GetMethod("check").Invoke(null, args))
+            if ((bool) commandType.GetMethod("check").Invoke(null, checkArgs))
             {
-
                 // Mask and OpCode matches...
-                var cmd = (Command) commandType.GetConstructors()[0].Invoke(args);
+                var cmd = (Command) commandType.GetConstructors()[0].Invoke(constrArgs);
                 cmd.Line = line;
                 return cmd;
             }
@@ -36,7 +37,7 @@ public abstract class Command
         throw new Exception("Unbekannter Befehl: " + command);
     }
 
-    public Command(ushort opcode)
+    public Command(ushort opcode, int line)
     {
         
     }
@@ -66,7 +67,7 @@ public abstract class Command
             addToTMR0 = 1; // RA4 / T0CKI edge
         }
 
-        if (Bit.get(memory.OPTION, Bit.PSA) == 0) // with prescaler?
+        if (Bit.get(memory.OPTION, Bit.PSA) == 0) // TMR0 with prescaler?
         {
             memory.Prescaler += (byte) addToTMR0; // add to prescaler register
 
@@ -80,13 +81,89 @@ public abstract class Command
             }
         }
 
-        int result = memory.TMR0 + addToTMR0;
+        int result = (int) memory.TMR0 + addToTMR0;
         if (result > 0xFF)
         {
-            Bit.set(memory.INTCON, Bit.T0IF);
+            memory.INTCON = (byte) Bit.set(memory.INTCON, Bit.T0IF);
         }
 
         memory.TMR0 = (byte) result;
+    }
+
+    protected virtual bool updateWatchdog(Memory memory)
+    {
+        // WATCHDOG
+        bool triggerWatchdog = Timer.TriggerWatchdog;
+        // Debug.Log("update wdt: trigger="+triggerWatchdog);
+
+        if (Bit.get(memory.OPTION, Bit.PSA) == 1) // Watchdog with prescaler?
+        {
+            // Debug.Log("prescaling wdt");
+            memory.Prescaler += triggerWatchdog ? (byte)1 : (byte)0; // add to prescaler register
+
+            // Divide by taking the bit of prescaler at position [PS2:PS0 + 1]
+            int bit = memory.PS; // +1
+            triggerWatchdog = Bit.get(memory.Prescaler, bit, 8) > 0;
+
+            if (triggerWatchdog) // Reset prescaler if bit is 1
+            {
+                memory.Prescaler = (byte) Bit.mask(memory.Prescaler, bit); 
+            }
+        }
+
+        // Debug.Log("after wdt: trigger="+triggerWatchdog);
+        if (triggerWatchdog) // trigger reset
+        {
+            Debug.Log("WATCHDOG TRIGGERED");
+            if (!memory.Sleeping) memory.Reset();
+            memory.Sleeping = false;
+            memory.Status = (byte) Bit.clear(memory.Status, Bit.TO);
+        }
+
+        return triggerWatchdog;
+    }
+
+    protected virtual void checkForInterrupt(Memory memory)
+    {
+        memory.runRBEdgeDetection();
+
+        if (Bit.get(memory.INTCON, Bit.GIE) == 1) // global interrupt enabled?
+        {
+            if (Bit.get(memory.INTCON, Bit.T0IE) == 1 && // T0 interrupt
+                Bit.get(memory.INTCON, Bit.T0IF) == 1) 
+            {
+                Debug.Log("INTERRUPT Timer0 overflow");
+                fireInterrupt(memory);
+            }
+            else 
+            if (Bit.get(memory.INTCON, Bit.INTE) == 1 && // RB0/INT interrupt
+                Bit.get(memory.INTCON, Bit.INTF) == 1) 
+            {
+                Debug.Log("INTERRUPT RB0/INT");
+                fireInterrupt(memory);
+            }
+            else 
+            if (Bit.get(memory.INTCON, Bit.RBIE) == 1 && // RB interrupt
+                Bit.get(memory.INTCON, Bit.RBIF) == 1) 
+            {
+                Debug.Log("INTERRUPT RB");
+                fireInterrupt(memory);
+            }
+            else 
+            if (Bit.get(memory.INTCON, Bit.EEIE) == 1 && // EEPROM interrupt
+                Bit.get(memory[Address.EECON1], Bit.EEIF) == 1) 
+            {
+                Debug.Log("INTERRUPT EEPROM");
+                fireInterrupt(memory);
+            }
+        }
+    }
+    
+    protected virtual void fireInterrupt(Memory memory)
+    {
+        memory.pushStack(memory.ProgramCounter); // Program counter has already been updated
+        memory.ProgramCounter = 4;
+        memory.INTCON = (byte) Bit.clear(memory.INTCON, Bit.GIE);
     }
 
     public virtual int run(Memory memory)
@@ -98,10 +175,10 @@ public abstract class Command
         for (int i = 0; i < cycles; i++)
         {
             updateTimer(memory);
+            if (updateWatchdog(memory)) return cycles; // Terminate command if watchdog triggers
         }
 
-        
-        // Fire interrupt...
+        checkForInterrupt(memory);
 
         return cycles;
     }

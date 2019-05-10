@@ -20,11 +20,11 @@
                     00020           org 0
                     00021  start    
 0000 281C           00022           goto main
-0001 0000           00023           nop
-0002 0000           00024           nop
-0003 0000           00025           nop
-                    00026           
-                    00027           ;Interrupt-Service-Routine muss an Adresse 4 stehen, deshalb die 3 NOPs
+                    00023           ;Interrupt-Service-Routine ISR muss an Adresse 4 stehen, deshalb die 3 NOPs
+0001 0000           00024           nop
+0002 0000           00025           nop
+0003 0000           00026           nop
+                    00027           
                     00028  ISR        
 0004 1D0B           00029           btfss intcon,2      ;war es ein Timer-Interrupt?
 0005 280B           00030           goto isr1           ;nein
