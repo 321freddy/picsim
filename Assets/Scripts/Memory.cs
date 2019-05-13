@@ -17,6 +17,8 @@ public class Memory
     private byte lastValueOfPortA;
     private byte lastValueOfPortB;
 
+    public bool WatchdogActive {get; set;} = true;
+
 
     public Memory()
     {

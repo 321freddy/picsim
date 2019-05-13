@@ -90,8 +90,10 @@ public abstract class Command
         memory.TMR0 = (byte) result;
     }
 
-    protected virtual bool updateWatchdog(Memory memory)
+    protected virtual bool updateWatchdog(Memory memory) // Returns true if watchdog has been triggered
     {
+        if (!memory.WatchdogActive) return false;
+
         // WATCHDOG
         bool triggerWatchdog = Timer.TriggerWatchdog;
         // Debug.Log("update wdt: trigger="+triggerWatchdog);
