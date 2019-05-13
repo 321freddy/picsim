@@ -24,6 +24,8 @@ public class GUIController : MonoBehaviour
     public GameObject registerRowTemplate;
     public GameObject registerTextTemplate;
 
+    public GameObject EEPROMContainer;
+
     public Slider speedSlider;
 
     private Simulation simulation;
@@ -47,6 +49,7 @@ public class GUIController : MonoBehaviour
         }
 
         loadRamView();
+        loadEEPROMView();
     }
 
     private void setSimulationRunning(bool running)
@@ -190,6 +193,7 @@ public class GUIController : MonoBehaviour
 
         //Refresh View
         refreshRamView();
+        refreshEEPROMView();
     }
 
     public void onFrequencySelected()
@@ -223,6 +227,7 @@ public class GUIController : MonoBehaviour
 
             //Refresh View
             refreshRamView();
+            refreshEEPROMView();
         }
         else
         {
@@ -287,6 +292,7 @@ public class GUIController : MonoBehaviour
         // OutputChangedRA();
         // OutputChangedRB();
         refreshRamView();
+        refreshEEPROMView();
         updateRegisterDisplay();
     }
     public void onHelpClicked()
@@ -342,6 +348,7 @@ public class GUIController : MonoBehaviour
 
             //Refresh View
             refreshRamView();
+            refreshEEPROMView();
         }
     }
 
@@ -387,11 +394,12 @@ public class GUIController : MonoBehaviour
             
             //Refresh View
             refreshRamView();
+            refreshEEPROMView();
         }
     }
    
-    /* refreshRamView():
-     * refreshs the RAM view if this function is called. Reads values form memory with the function getRaw(BYTE ADDRESS).
+    /* loadRamView():
+     * loads the RAM view if this function is called. Reads values form memory with the function getRaw(BYTE ADDRESS).
      * Output for debugging reasons.
      * @registerNumStr: Number of each register as a STRING value. Used for Naming each cloned Object right.
      * @registerNumInt: Number of each register as an INT value. Used for addressing the right memory.
@@ -482,7 +490,79 @@ public class GUIController : MonoBehaviour
             }
         }
     }
-    
+    /* loadEEPROMView():
+     * loads the RAM view if this function is called. Reads values form memory with the function getRaw(BYTE ADDRESS).
+     * Output for debugging reasons.
+     * @registerNumStr: Number of each register as a STRING value. Used for Naming each cloned Object right.
+     * @registerNumInt: Number of each register as an INT value. Used for addressing the right memory.
+     * @registerRow: Template which is cloned for each row in the register view.
+     * @registerBlock: Template which is cloned for each block in the register view. Eight blocks per registerRow.
+     * @text: Template which is cloned for each block in the register view. Shows register value after refreshing.
+     * 
+     */
+    public void loadEEPROMView()
+    {
+        string registerNumStr;
+        int registerNumInt;
+        // for-loop iterates 32 times, one time for each row in the RAM-View
+        for (int i = 0; i < 8; i++)
+        {
+            // Clone registerRow-Template
+            var registerRow = Instantiate(registerRowTemplate, EEPROMContainer.transform);
+            // Renaing each clone 
+            registerRow.name = "Row " + (i * 8).ToString("X");
+            // for-loop iterates 8 time per row, cloning and renaming each generated registerBlock
+            for (int j = 0; j < 8; j++)
+            {
+                // Clone registerBlock-Template
+                var registerBlock = Instantiate(registerTemplate, registerRow.transform);
+                // Formating the generated HEX-Values
+                // @if: numbers from 0x00-0x0F
+                // @else: numbers from 0x10-0xFF
+                if (i * 8 + j < 16)
+                {
+                    // Name
+                    registerNumStr = "0" + (i * 8 + j).ToString("X");
+                    // Value
+                    registerNumInt = i * 8 + j;
+                }
+                else
+                {
+                    // Name
+                    registerNumStr = (i * 8 + j).ToString("X");
+                    // Value
+                    registerNumInt = i * 8 + j;
+                }
+                // Rename each block with the above calculated name
+                registerBlock.name = "Block: " + registerNumStr;
+                // Clone text-template
+                var text = Instantiate(registerTextTemplate, registerBlock.transform);
+                // Rename eacht text-element with the same name as the block above
+                text.name = "Register: " + registerNumStr;
+                // Read memory and write the right value to the text-element
+                // GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte) registerNumInt)).ToString("X2");
+            }
+        }
+    }
+
+    /* refreshEEPROMView:
+     * refresh every text box which was genereatet/cloned before
+     * does not create any new object
+     * can only be used, after RamView was initialized 
+     */
+    public void refreshEEPROMView()
+    {
+        for (int y = 0; y < 8; y++)
+        {
+            var row = EEPROMContainer.transform.GetChild(y);
+            for (int x = 0; x < 8; x++)
+            {
+                var block = row.GetChild(x);
+                // block.GetComponentInChildren<Text>().text = (simulation.Memory.readEEPROM()).ToString("X2");
+                block.GetComponentInChildren<Text>().text = ":3";
+            }
+        }
+    }
     public void onSpeedChanged()
     {
         Time.timeScale = speedSlider.value;
