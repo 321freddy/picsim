@@ -137,7 +137,7 @@ public class Memory
             {
                 if (EECON2 == 0x55 && value == 0xAA)
                 {
-                    if (Bit.get(value, Bit.WR) == 1)
+                    if (Bit.get(EECON1, Bit.WR) == 1)
                     {
                         writeEEPROM();
                         EECON1 = (byte) Bit.clear(EECON1, Bit.WR); // clear WR bit
