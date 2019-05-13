@@ -482,9 +482,18 @@ public class GUIController : MonoBehaviour
             }
         }
     }
+    
     public void onSpeedChanged()
     {
         Time.timeScale = speedSlider.value;
+    }
+
+    public void onWatchdogToggled()
+    {
+        if (simulation != null)
+        {
+            simulation.Memory.WatchdogActive = GameObject.Find("Watchdog")?.GetComponentInChildren<Toggle>()?.isOn ?? true;
+        }
     }
 }
 
