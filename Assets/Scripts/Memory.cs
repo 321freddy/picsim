@@ -161,7 +161,10 @@ public class Memory
     {
         return (byte)memory[addr]; // Read value
     }
-
+    public byte getEEPROM(byte addr)
+    {
+        return (byte)eeprom[addr];
+    }
     public void setRaw(byte addr, byte value)
     {
         memory[addr] = (ushort) value; // Write value
