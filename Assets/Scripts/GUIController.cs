@@ -21,6 +21,7 @@ public class GUIController : MonoBehaviour
     public GameObject stepInButton;
     public GameObject stepOutButton;
     public GameObject resetButton;
+    public GameObject stepOverButton;
 
     public GameObject ramContainer;
     public GameObject registerTemplate;
@@ -202,6 +203,7 @@ public class GUIController : MonoBehaviour
         stepInButton.GetComponent<Button>().interactable = true;
         stepOutButton.GetComponent<Button>().interactable = true;
         resetButton.GetComponent<Button>().interactable = true;
+        stepOverButton.GetComponent<Button>().interactable = true;
         fileSelected = true;
         scrollRect.verticalNormalizedPosition = 1f;
 
