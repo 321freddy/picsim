@@ -35,7 +35,9 @@ public class GUIController : MonoBehaviour
 
     private int frequencyIndex;
 
-    // Start is called before the first frame update
+    /* Start:
+     * Start is called before the first frame update
+     */
     void Start()
     {
         scrollRect = scrollRect ?? codeContainer.GetComponentInParent<ScrollRect>();
@@ -196,12 +198,18 @@ public class GUIController : MonoBehaviour
         refreshEEPROMView();
     }
 
+    /* onFrequencySelected:
+     * Function changes frequency if changed in GUI dropdown
+     */
     public void onFrequencySelected()
     {
         frequencyIndex = freqDropdown.value; // Get frequency index from dropdown menue not actual frequency
        //Debug.Log(frequencyIndex);
     }
 
+    /* StepIn:
+     * Function is called, everytime an code line is executed
+     */
     public void stepIn()
     {
         int cycles = simulation.step(); // Run command
@@ -236,7 +244,9 @@ public class GUIController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    /* FixedUpdate:
+     * Update is called once per frame
+     */
     void FixedUpdate()
     {
         if (simulationRunning)
@@ -263,15 +273,6 @@ public class GUIController : MonoBehaviour
         }
     }
 
-    public void onStepOutBtnClick()
-    {
-        if (!simulationRunning)
-        {
-            Debug.Log("Step out");
-            // ...
-        }
-    }
-
     public void onResetBtnClick()
     {
         Debug.Log("Reset program");
@@ -289,18 +290,24 @@ public class GUIController : MonoBehaviour
         getCodeLine(currentCommand).setRunning(true); // Mark first command
         updateScroll();
         TimerReset();
-        // OutputChangedRA();
-        // OutputChangedRB();
         refreshRamView();
         refreshEEPROMView();
         updateRegisterDisplay();
     }
+
+    /* onHelpClicked:
+     * If help button is clicked, this function opens a PDF
+     */
     public void onHelpClicked()
     {
-        System.Diagnostics.Process.Start("Help.jpg");
+        System.Diagnostics.Process.Start("PICDOKU.pdf");
         //Application.OpenURL("http://lmgtfy.com/?q=Pic+Simulator");
     }
-    public void TimerReset()    //Reset timer and total time
+
+    /* TimerReset:
+     * Reset Timer. Used after a new file was loaded or when reset button was pressed.
+     */
+    public void TimerReset() 
     {
         GameObject.Find("Laufzeit").GetComponent<Text>().text = Convert.ToString("0.00") + " µs";
         Timer.TotalTime = 0;
@@ -468,23 +475,6 @@ public class GUIController : MonoBehaviour
             var row = ramContainer.transform.GetChild(y);
             for (int x = 0; x < 8; x++)
             {
-                // // Value
-                // registerNumInt = i;
-                // if (i < 16)
-                // {
-                //     // Name
-                //     registerNumStr = "0" + registerNumInt.ToString("X");
-                // }
-                // else
-                // {
-                //     // Name
-                //     registerNumStr = registerNumInt.ToString("X");
-                // }
-
-                // // Read memory and write the right value to the text-element
-                // GameObject.Find(("Register: " + registerNumStr)).GetComponent<Text>().text = (simulation.Memory.getRaw((byte)registerNumInt)).ToString("X2");
-
-
                 var block = row.GetChild(x);
                 block.GetComponentInChildren<Text>().text = simulation.Memory.getRaw((byte) (y * 8 + x)).ToString("X2");
             }
@@ -548,7 +538,7 @@ public class GUIController : MonoBehaviour
     /* refreshEEPROMView:
      * refresh every text box which was genereatet/cloned before
      * does not create any new object
-     * can only be used, after RamView was initialized 
+     * can only be used, after EEPROMView was initialized 
      */
     public void refreshEEPROMView()
     {
@@ -563,11 +553,19 @@ public class GUIController : MonoBehaviour
             }
         }
     }
+
+    /* onSpeedChanged:
+     * If sppedslider is used, this function is triggered
+     * Changes calculation speed
+     */
     public void onSpeedChanged()
     {
         Time.timeScale = speedSlider.value;
     }
 
+    /* onWatchdogToggled:
+     * Activate/Deactivate Watchdog
+     */
     public void onWatchdogToggled()
     {
         if (simulation != null)
@@ -576,4 +574,3 @@ public class GUIController : MonoBehaviour
         }
     }
 }
-
