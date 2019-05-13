@@ -54,6 +54,35 @@ class Simulation
 
     // Runs one command and increases PC. Returns amount of cycles executed. (0 if program ended)
     public int step() => getCurrentCommand()?.run(Memory) ?? 0;
+    
+    public int stepOut()
+    {
+        var intitialStackPos = Memory.getStackPos();
+        if (intitialStackPos == 0) return step();
+
+        int cycles = 0;
+        while (intitialStackPos <= Memory.getStackPos())
+        {
+            var newCycles = step();
+            if (newCycles == 0) break;
+            cycles += newCycles;
+        }
+
+        return cycles;
+    }
+
+    public int stepOver()
+    {
+        var intitialStackPos = Memory.getStackPos();
+        int cycles = step();
+
+        if (Memory.getStackPos() > intitialStackPos)
+        {
+            cycles += stepOut();
+        }
+
+        return cycles;
+    }
 
     public bool reachedBreakpoint() => getCurrentCommand()?.breakpoint ?? false;
 

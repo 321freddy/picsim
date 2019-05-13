@@ -177,6 +177,11 @@ public class Memory
         return (byte)stack[index];
     }
 
+    public int getStackPos()
+    {
+        return stackPos;
+    }
+
 
     public byte w_Register
     {

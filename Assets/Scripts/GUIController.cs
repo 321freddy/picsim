@@ -205,6 +205,23 @@ public class GUIController : MonoBehaviour
     public void stepIn()
     {
         int cycles = simulation.step(); // Run command
+        updateSimulation(cycles);
+    }
+
+    public void stepOut()
+    {
+        int cycles = simulation.stepOut(); // Run command
+        updateSimulation(cycles);
+    }
+
+    public void stepOver()
+    {
+        int cycles = simulation.stepOver(); // Run command
+        updateSimulation(cycles);
+    }
+
+    private void updateSimulation(int cycles)
+    {
         if (cycles > 0)
         {
             // Update GUI
@@ -268,7 +285,16 @@ public class GUIController : MonoBehaviour
         if (!simulationRunning)
         {
             Debug.Log("Step out");
-            // ...
+            stepOut();
+        }
+    }
+
+    public void onStepOverBtnClick()
+    {
+        if (!simulationRunning)
+        {
+            Debug.Log("Step over");
+            stepOver();
         }
     }
 
