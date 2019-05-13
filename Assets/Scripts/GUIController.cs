@@ -8,6 +8,9 @@ using UnityEngine.EventSystems;
 
 public class GUIController : MonoBehaviour
 {
+    public Color COLOR_STACK_ACTIVE;
+    public Color COLOR_STACK_INACTIVE;
+
     public Dropdown fileDropdown;
     public Dropdown freqDropdown;
     public ScrollRect scrollRect;
@@ -94,6 +97,15 @@ public class GUIController : MonoBehaviour
         GameObject.Find("Stack05").GetComponent<Text>().text = (simulation.Memory.getStack(5)).ToString("X2");
         GameObject.Find("Stack06").GetComponent<Text>().text = (simulation.Memory.getStack(6)).ToString("X2");
         GameObject.Find("Stack07").GetComponent<Text>().text = (simulation.Memory.getStack(7)).ToString("X2");
+        
+        GameObject.Find("Stack00").GetComponentInParent<Image>().color = (simulation.Memory.getStackPos() == 0) ? COLOR_STACK_ACTIVE : COLOR_STACK_INACTIVE;
+        GameObject.Find("Stack01").GetComponentInParent<Image>().color = (simulation.Memory.getStackPos() == 1) ? COLOR_STACK_ACTIVE : COLOR_STACK_INACTIVE;
+        GameObject.Find("Stack02").GetComponentInParent<Image>().color = (simulation.Memory.getStackPos() == 2) ? COLOR_STACK_ACTIVE : COLOR_STACK_INACTIVE;
+        GameObject.Find("Stack03").GetComponentInParent<Image>().color = (simulation.Memory.getStackPos() == 3) ? COLOR_STACK_ACTIVE : COLOR_STACK_INACTIVE;
+        GameObject.Find("Stack04").GetComponentInParent<Image>().color = (simulation.Memory.getStackPos() == 4) ? COLOR_STACK_ACTIVE : COLOR_STACK_INACTIVE;
+        GameObject.Find("Stack05").GetComponentInParent<Image>().color = (simulation.Memory.getStackPos() == 5) ? COLOR_STACK_ACTIVE : COLOR_STACK_INACTIVE;
+        GameObject.Find("Stack06").GetComponentInParent<Image>().color = (simulation.Memory.getStackPos() == 6) ? COLOR_STACK_ACTIVE : COLOR_STACK_INACTIVE;
+        GameObject.Find("Stack07").GetComponentInParent<Image>().color = (simulation.Memory.getStackPos() == 7) ? COLOR_STACK_ACTIVE : COLOR_STACK_INACTIVE;
 
         //Write Bits to GUI StatusReg
         GameObject.Find("C (1)").GetComponent<Text>().text = Convert.ToString(Bit.get(simulation.Memory.Status, Bit.C), 2);

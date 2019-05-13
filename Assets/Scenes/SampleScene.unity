@@ -29968,6 +29968,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00347ccec8145bb47a9e9d86c98f68b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  COLOR_STACK_ACTIVE: {r: 0, g: 0.72156864, b: 0.20392157, a: 1}
+  COLOR_STACK_INACTIVE: {r: 1, g: 1, b: 1, a: 0.392}
   fileDropdown: {fileID: 890431575}
   freqDropdown: {fileID: 484158585}
   scrollRect: {fileID: 0}
