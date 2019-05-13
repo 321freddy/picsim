@@ -559,7 +559,7 @@ public class GUIController : MonoBehaviour
             {
                 var block = row.GetChild(x);
                 // block.GetComponentInChildren<Text>().text = (simulation.Memory.readEEPROM()).ToString("X2");
-                block.GetComponentInChildren<Text>().text = simulation.Memory.getEEPROM((byte)(y * x + 8)).ToString("X2"); ;
+                block.GetComponentInChildren<Text>().text = simulation.Memory.getEEPROM((byte)(y * 8 + x)).ToString("X2"); ;
             }
         }
     }
